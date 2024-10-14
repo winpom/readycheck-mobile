@@ -1,6 +1,6 @@
 import { StatusBar } from "expo-status-bar";
 import { Text, View, Image, ScrollView } from "react-native";
-import { Link } from "expo-router";
+import { Redirect, router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { images } from "../constants";
@@ -11,7 +11,7 @@ export default function App() {
   return (
     <SafeAreaView className="bg-primary h-full" >
       <ScrollView contentContainerStyle={{ height: "100%" }}>
-        <View className="w-full justify-center items-center h-full px-5">
+        <View className="w-full justify-center items-center h-[85vh] px-5">
           <Image
             source={images.logo}
             className="w-[280px] h-[84px]"
@@ -23,26 +23,26 @@ export default function App() {
             resizeMode="contain"
           />
           <View className="relative mt-5">
-            <Text className="text 3-l text-white font-bold text-center">
+            <Text className="text-2xl text-white font-bold text-center">
               Get Ready for Anything with{" "}
               <Text className="text-secondary-200">ReadyCheck</Text>
             </Text>
-            <Image
-              source={images.path}
-              className="w-[136px] h-[15px] absolute -bottom-2 -right-2"
-              resizeMode="contain"
-            ></Image>
           </View>
-          <Text className="text-sm font-pregular text-gray-100 mt-7 text-center">
-            Where seeing who's ready is as simple as a check
+          <Text className="text-sm font-pregular text-gray-100 mt-3 text-center">
+            Where seeing who's ready
+          </Text>
+          <Text className="text-sm font-pregular text-gray-100 mb-3 text-center">
+            is as simple as a ✅
           </Text>
           <CustomButton
             title="Continue with Email"
-            handlePress={() => {}}
+            handlePress={() => router.push('/sign-in')}
             containerStyles="w-full mt-7"
           />
         </View>
       </ScrollView>
+
+      <StatusBar backgroundColor="#161622" style="light" />
     </SafeAreaView>
   );
 }
