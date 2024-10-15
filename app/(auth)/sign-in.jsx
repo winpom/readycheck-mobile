@@ -6,6 +6,8 @@ import { Link } from 'expo-router'
 import { images } from "../../constants"
 import { FormField, CustomButton } from "../../components"
 
+import { signIn } from '../../lib/appwrite'
+
 const SignIn = () => {
   const [form, setForm] = useState({
     email: '',
@@ -14,7 +16,24 @@ const SignIn = () => {
 
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const submit = () => { }
+  const submit = async () => {
+    if (!form.email || !form.password) {
+      Alert.alert('Error', 'Please fill in all fields')
+    }
+    setIsSubmitting(true);
+
+    try {
+      await signIn(form.email, form.password)
+
+      // set it to global state...
+
+      router.replace('/home')
+    } catch (error) {
+      Alert.alert('Error', error.message)
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
 
   return (
     <SafeAreaView className="bg-primary h-full">
@@ -39,7 +58,7 @@ const SignIn = () => {
             title="Password"
             value={form.password}
             handleChangeText={(e) => setForm({ ...form, password: e })}
-            otherStyles="mt-7"
+            otherStyles="mt-4"
           />
           <CustomButton
             title="Sign In"
@@ -48,7 +67,7 @@ const SignIn = () => {
             isLoading={isSubmitting}
           />
 
-          <View className="justify-center pt-5 flex-row gap-2">
+          <View className="justify-center pt-3 flex-row gap-2">
             <Text className="text-lg text-gray-100 font-pregular">
               Don't have an account?
             </Text>
