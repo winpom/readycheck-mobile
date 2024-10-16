@@ -14,14 +14,14 @@
     },
     "ios": {
       "supportsTablet": true,
-      "package": "wp.readycheck"
+      "package": "com.wp.readycheck"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "wp.readycheck"
+      "package": "com.wp.readycheck"
     },
     "web": {
       "favicon": "./assets/favicon.png"

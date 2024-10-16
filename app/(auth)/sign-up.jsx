@@ -24,7 +24,7 @@ const SignUp = () => {
 
     setIsSubmitting(true);
     try {
-      const result = await createUser(form.email, form.username, form.password)
+      const result = await createUser(form.email, form.password, form.username)
 
       // set it to global state...
 

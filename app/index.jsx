@@ -24,7 +24,7 @@ export default function App() {
           />
           <View className="relative mt-5">
             <Text className="text-2xl text-white font-bold text-center">
-              Get Ready for Anything with{" "}
+              Be Ready for Anything with{" "}
               <Text className="text-secondary-200">ReadyCheck</Text>
             </Text>
           </View>
