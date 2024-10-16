@@ -6,8 +6,13 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { images } from "../constants";
 import { CustomButton } from "../components";
 
+import { useGlobalContext } from "../context/GlobalProvider";
 
 export default function App() {
+  const { isLoading, isLoggedIn } = useGlobalContext();
+
+  if(!isLoading && isLoggedIn) return <Redirect href="/home"/>
+
   return (
     <SafeAreaView className="bg-primary h-full" >
       <ScrollView contentContainerStyle={{ height: "100%" }}>
@@ -29,14 +34,14 @@ export default function App() {
             </Text>
           </View>
           <Text className="text-sm font-pregular text-gray-100 mt-3 text-center">
-            Where seeing who's ready
+            Where seeing who"s ready
           </Text>
           <Text className="text-sm font-pregular text-gray-100 mb-3 text-center">
             is as simple as a ✅
           </Text>
           <CustomButton
             title="Continue with Email"
-            handlePress={() => router.push('/sign-in')}
+            handlePress={() => router.push("/sign-in")}
             containerStyles="w-full mt-7"
           />
         </View>
