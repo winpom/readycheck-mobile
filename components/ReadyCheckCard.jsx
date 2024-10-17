@@ -1,6 +1,7 @@
 import { View, Text, Image } from 'react-native'
 import React from 'react'
 
+import { formatTiming } from '../utils/formatTiming';
 import { icons } from '../constants';
 
 
@@ -26,10 +27,13 @@ const ReadyCheckCard = ({ readycheck: { title, activity, timing, owner: { userna
                     </View>
                 </View>
                 <View className="justify-center flex-w ml-3 gap-y-1">
-                        <Text className="text-white font-psemibold text-sm" numberOfLines={1}>
-                            {timing}
-                        </Text>
-                    </View>
+                    <Text className="text-white font-psemibold text-sm" numberOfLines={1}>
+                        {activity}
+                    </Text>
+                    <Text className="text-xs text-gray-100 font-pregular" numberOfLines={1}>
+                        {formatTiming(timing)}
+                    </Text>
+                </View>
                 <View className="pt-2">
                     <Image
                         source={icons.menu}

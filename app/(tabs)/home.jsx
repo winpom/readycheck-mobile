@@ -2,7 +2,6 @@ import { View, Text, FlatList, Image, RefreshControl, Alert } from "react-native
 import { React, useState, useEffect } from "react"
 import { SafeAreaView } from "react-native-safe-area-context"
 
-import Upcoming from "../../components/Upcoming"
 import EmptyState from "../../components/EmptyState"
 import ReadyCheckCard from "../../components/ReadyCheckCard"
 import { getReadyChecks } from "../../lib/appwrite"
@@ -25,7 +24,7 @@ const Home = () => {
         data={readychecks}
         keyExtractor={(item) => item.$id}
         renderItem={({ item }) => (
-          <ReadyCheckCard readycheck={item}/>
+          <ReadyCheckCard readycheck={item} />
         )}
         ListHeaderComponent={() => (
           <View className="my-6 px-4 space-y-6">
@@ -51,9 +50,6 @@ const Home = () => {
               <Text className="text-gray-100 text-lg font-pregular mb-3">
                 Upcoming ReadyChecks
               </Text>
-
-              <Upcoming checks={[{ id: 1 }, { id: 2 }, { id: 3 }] ?? []} />
-
             </View>
 
           </View>
