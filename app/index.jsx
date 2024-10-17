@@ -11,7 +11,7 @@ import { useGlobalContext } from "../context/GlobalProvider";
 export default function App() {
   const { isLoading, isLoggedIn } = useGlobalContext();
 
-  if(!isLoading && isLoggedIn) return <Redirect href="/home"/>
+  if (!isLoading && isLoggedIn) return <Redirect href="/home" />
 
   return (
     <SafeAreaView className="bg-primary h-full" >
@@ -37,8 +37,13 @@ export default function App() {
             Where seeing who"s ready
           </Text>
           <Text className="text-sm font-pregular text-gray-100 mb-3 text-center">
-            is as simple as a ✅
+            is as simple as a
           </Text>
+          <Image
+            source={images.logoSmall}
+            className="w-9 h-10"
+            resizeMode="contain"
+          />
           <CustomButton
             title="Continue with Email"
             handlePress={() => router.push("/sign-in")}
