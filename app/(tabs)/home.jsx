@@ -1,30 +1,31 @@
-import { View, Text, FlatList, Image, RefreshControl } from "react-native"
-import { React, useState } from "react"
+import { View, Text, FlatList, Image, RefreshControl, Alert } from "react-native"
+import { React, useState, useEffect } from "react"
 import { SafeAreaView } from "react-native-safe-area-context"
 
 import Upcoming from "../../components/Upcoming"
 import EmptyState from "../../components/EmptyState"
-
+import ReadyCheckCard from "../../components/ReadyCheckCard"
+import { getReadyChecks } from "../../lib/appwrite"
 import { images } from "../../constants"
+import useAppwrite from "../../lib/useAppwrite"
 
 const Home = () => {
+  const { data: readychecks, refetch } = useAppwrite(getReadyChecks)
   const [refreshing, setRefreshing] = useState(false)
 
   const onRefresh = async () => {
     setRefreshing(true);
-    // recall ReadyChecks to see if any new RCs appear
+    await refetch();
     setRefreshing(false);
   }
 
   return (
     <SafeAreaView className="bg-primary h-full">
       <FlatList
-        data={[{ id: 1 }, { id: 2 }, { id: 3 }]}
+        data={readychecks}
         keyExtractor={(item) => item.$id}
         renderItem={({ item }) => (
-          <Text className="text-3xl text-white">
-            {item.id}
-          </Text>
+          <ReadyCheckCard readycheck={item}/>
         )}
         ListHeaderComponent={() => (
           <View className="my-6 px-4 space-y-6">
@@ -59,10 +60,10 @@ const Home = () => {
         )}
         ListEmptyComponent={() => (
           <EmptyState
-          title="No Upcoming ReadyChecks"
-          subtitle="Create one to get started!"/>
+            title="No Upcoming ReadyChecks"
+            subtitle="Create one to get started!" />
         )}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh}/>}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
       />
     </SafeAreaView>
   )
