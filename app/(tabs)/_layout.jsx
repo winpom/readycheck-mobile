@@ -104,7 +104,7 @@ const TabsLayout = () => {
             headerShown: false,
             tabBarIcon: ({ color, focused }) => (
               <TabIcon
-                icon={icons.setting}
+                icon={icons.settings}
                 color={color}
                 name="Settings"
                 focused={focused}
