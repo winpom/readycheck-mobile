@@ -5,20 +5,13 @@ import React from 'react'
 import { icons } from '../../constants';
 
 const TabIcon = ({ icon, color, name, focused }) => {
-  const iconSize = name === "Social" 
-  ? "w-9 h-6" 
-  : name === "Create" 
-  ? "w-8 h-8" 
-  : "w-6 h-6";
-
-  
   return (
     <View className="items-center justify-center gap-1">
       <Image
         source={icon}
         resizeMode="contain"
         tintColor={color}
-        className={iconSize}
+        className="w-6 h-6"
       />
       <Text className={`${focused ? 'font-psemibold' : 'font-pregular'} text-xs`} style={{ color: color }}>
         {name}
