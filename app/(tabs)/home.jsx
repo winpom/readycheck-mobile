@@ -3,13 +3,16 @@ import { React, useState, useEffect } from "react"
 import { SafeAreaView } from "react-native-safe-area-context"
 
 import EmptyState from "../../components/EmptyState"
+import Upcoming from "../../components/Upcoming"
 import ReadyCheckCard from "../../components/ReadyCheckCard"
-import { getReadyChecks } from "../../lib/appwrite"
+import { getReadyChecks, getLatestReadyChecks } from "../../lib/appwrite"
 import { images } from "../../constants"
 import useAppwrite from "../../lib/useAppwrite"
 
 const Home = () => {
   const { data: readychecks, refetch } = useAppwrite(getReadyChecks)
+  const { data: latestReadychecks } = useAppwrite(getLatestReadyChecks)
+
   const [refreshing, setRefreshing] = useState(false)
 
   const onRefresh = async () => {
@@ -47,9 +50,12 @@ const Home = () => {
             </View>
 
             <View className="w-full flex-1 pt-5 pb-8">
-              <Text className="text-gray-100 text-lg font-pregular mb-1">
+              <Text className="text-gray-100 text-lg font-pregular mb-2">
                 Upcoming ReadyChecks
               </Text>
+
+              <Upcoming readychecks={latestReadychecks ?? []}/>
+
             </View>
           </View>
         )}
