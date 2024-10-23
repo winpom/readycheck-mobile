@@ -6,8 +6,8 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 
 const Social = () => {
   return (
-    <SafeAreaView className="bg-primary h-full">
-      <Text className="text-white">Social</Text>
+    <SafeAreaView className="bg-primary h-full pt-10">
+      <Text className="text-secondary text-3xl text-center mb-8">Social</Text>
       <SearchInput />
     </SafeAreaView>
   )

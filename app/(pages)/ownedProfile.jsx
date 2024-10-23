@@ -12,7 +12,7 @@ import ReadyCheckCard from "../../components/ReadyCheckCard"
 import InfoBox from "../../components/InfoBox"
 
 
-const Profile = () => {
+const ownedProfile = () => {
   const { user, setUser, setIsLoggedIn } = useGlobalContext();
   const { data: activeReadychecks } = useAppwrite(() => getOwnedReadyChecks(user.$id));
 
@@ -80,4 +80,4 @@ const Profile = () => {
   )
 }
 
-export default Profile
+export default ownedProfile
