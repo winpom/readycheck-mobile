@@ -6,7 +6,7 @@ import { images } from "../constants"
 import CustomButton from "./CustomButton"
 
 
-const EmptyState = ({ title, subtitle }) => {
+const SearchEmptyState = ({ title, subtitle }) => {
     return (
         <View className="justify-center items-center px-4">
             <Image
@@ -30,4 +30,4 @@ const EmptyState = ({ title, subtitle }) => {
     )
 }
 
-export default EmptyState
+export default SearchEmptyState

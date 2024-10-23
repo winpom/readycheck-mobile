@@ -2,7 +2,7 @@ import { View, Text, FlatList, Image, RefreshControl, Alert } from "react-native
 import { React, useState, useEffect } from "react"
 import { SafeAreaView } from "react-native-safe-area-context"
 
-import EmptyState from "../../components/EmptyState"
+import RCEmptyState from "../../components/RCEmptyState"
 import Upcoming from "../../components/Upcoming"
 import ReadyCheckCard from "../../components/ReadyCheckCard"
 import { getReadyChecks, getLatestReadyChecks } from "../../lib/appwrite"
@@ -60,7 +60,7 @@ const Home = () => {
           </View>
         )}
         ListEmptyComponent={() => (
-          <EmptyState
+          <RCEmptyState
             title="No Upcoming ReadyChecks"
             subtitle="Create one to get started!" />
         )}

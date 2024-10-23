@@ -34,16 +34,18 @@ export default function App() {
             </Text>
           </View>
           <Text className="text-sm font-pregular text-gray-100 mt-3 text-center">
-            Where seeing who"s ready
+            Where seeing who's ready
           </Text>
-          <Text className="text-sm font-pregular text-gray-100 mb-3 text-center">
-            is as simple as a
-          </Text>
-          <Image
-            source={images.logoSmall}
-            className="w-9 h-10"
-            resizeMode="contain"
-          />
+          <View className="flex-row justify-center items-center mb-3">
+            <Text className="text-sm font-pregular text-gray-100">
+              is as simple as a
+            </Text>
+            <Image
+              source={images.logoSmall}
+              className="w-5 h-5 ml-1"
+              resizeMode="contain"
+            />
+          </View>
           <CustomButton
             title="Continue with Email"
             handlePress={() => router.push("/sign-in")}

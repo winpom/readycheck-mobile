@@ -2,7 +2,7 @@ import { View, Text, FlatList } from "react-native"
 import { React, useEffect } from "react"
 import { SafeAreaView } from "react-native-safe-area-context"
 
-import EmptyState from "../../components/EmptyState"
+import SearchEmptyState from "../../components/SearchEmptyState"
 import UserCard from "../../components/UserCard"
 import { searchUsers } from "../../lib/appwrite"
 import useAppwrite from "../../lib/useAppwrite"
@@ -39,7 +39,7 @@ const Search = () => {
           </View>
         )}
         ListEmptyComponent={() => (
-          <EmptyState
+          <SearchEmptyState
             title="No Users Found"
             subtitle="Try searching something else" />
         )}

@@ -9,6 +9,7 @@ import { FormField, CustomButton } from "../../components"
 import { createUser } from "../../lib/appwrite"
 
 const SignUp = () => {
+  const { setUser, setIsLogged } = useGlobalContext();
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [form, setForm] = useState({
     username: "",
