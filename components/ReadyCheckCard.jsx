@@ -1,15 +1,15 @@
-import { View, Text, Image } from 'react-native';
-import React from 'react';
+import { View, Text, Image } from "react-native";
+import React from "react";
 
-import { formatTiming } from '../utils/formatTiming';
-import { icons } from '../constants';
+import { formatTiming } from "../utils/formatTiming";
+import { icons } from "../constants";
 
 const ReadyCheckCard = ({ readycheck }) => {
     const {
-        title = 'Untitled',
-        activity = 'Unknown Activity',
-        timing = 'Unknown Time',
-        owner: { username = 'Anonymous', avatar = icons.defaultAvatar } = {}, // Default values for owner
+        title = "Untitled",
+        activity = "Unknown Activity",
+        timing = "Unknown Time",
+        owner: { username = "Anonymous", avatar = icons.defaultAvatar } = {}, // Default values for owner
     } = readycheck || {}; // Fallback to empty object if readycheck is undefined
 
     return (

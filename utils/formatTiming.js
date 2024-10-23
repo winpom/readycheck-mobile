@@ -1,13 +1,13 @@
 export const formatTiming = (timing) => {
   const date = new Date(timing);
   
-  // Automatically uses user's locale
+  // Automatically uses user"s locale
   const options = {
-    hour: '2-digit',
-    minute: '2-digit',
-    day: '2-digit',
-    month: '2-digit',
-    year: '2-digit',
+    hour: "2-digit",
+    minute: "2-digit",
+    day: "2-digit",
+    month: "2-digit",
+    year: "2-digit",
   };
 
   // Get time first, then date

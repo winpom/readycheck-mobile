@@ -1,7 +1,7 @@
-import { View, Text } from 'react-native'
-import React from 'react'
+import { View, Text } from "react-native"
+import React from "react"
 import SearchInput from "../../components/SearchInput";
-import { SafeAreaView } from 'react-native-safe-area-context'
+import { SafeAreaView } from "react-native-safe-area-context"
 
 
 const Social = () => {

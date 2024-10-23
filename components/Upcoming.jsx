@@ -1,7 +1,7 @@
-import { View, FlatList, TouchableOpacity, Text, ActivityIndicator } from 'react-native';
+import { View, FlatList, TouchableOpacity, Text, ActivityIndicator } from "react-native";
 import { React, useState, useEffect } from "react";
-import * as Animatable from 'react-native-animatable';
-import { useRouter } from 'expo-router';
+import * as Animatable from "react-native-animatable";
+import { useRouter } from "expo-router";
 import ReadyCheckCard from "./ReadyCheckCard";
 import { getLatestReadyChecks } from "../lib/appwrite"
 

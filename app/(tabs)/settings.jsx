@@ -1,9 +1,9 @@
 import { View, Image, Text, FlatList, TouchableOpacity } from "react-native"
-import React from 'react'
+import React from "react"
 import { Link } from "expo-router"
 import { SafeAreaView } from "react-native-safe-area-context"
 import { StatusBar } from "expo-status-bar";
-import { router } from 'expo-router'
+import { router } from "expo-router"
 
 import { signOut } from "../../lib/appwrite"
 import useAppwrite from "../../lib/useAppwrite"

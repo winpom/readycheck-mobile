@@ -1,11 +1,11 @@
-import { View, Text, Image } from 'react-native';
-import React from 'react';
+import { View, Text, Image } from "react-native";
+import React from "react";
 
-import { icons } from '../constants';
+import { icons } from "../constants";
 
 const UserCard = ({ user }) => {
     const {
-        username = 'Anonymous', 
+        username = "Anonymous", 
         avatar = icons.defaultAvatar // Default avatar if none provided
     } = user || {}; // Fallback to an empty object if user is undefined
 
