@@ -22,27 +22,36 @@ const Settings = () => {
   }
 
   return (
-    <SafeAreaView className="bg-primary h-full">
-      <Text className="text-secondary text-3xl mt-10">Settings</Text>
-      <Link href="/profile" className="text-lg font-psemibold text-white">Profile</Link>
-      <TouchableOpacity
-        className="w-full mb-10 flex-row items-center"
-        onPress={logout}
-      >
-        <View className="flex-row items-center">
+    <SafeAreaView className="bg-primary h-full pt-20">
+      <Text className="text-secondary text-3xl text-center mb-8">Settings</Text>
+      <View className="flex-col px-6">
+        {/* Profile Link */}
+        <Link href="/ownedProfile" className="flex-row items-center mb-6">
           <Image
-            source={icons.logout}
-            className="w-5 h-5 mr-2" // Add some margin to the right of the icon
+            source={icons.profile}
+            className="w-6 h-6 mr-3"
             resizeMode="contain"
           />
-          <Text className="text-lg font-psemibold text-white">
-            Logout
-          </Text>
-        </View>
-      </TouchableOpacity>
+          <Text className="text-lg font-psemibold text-white">Profile</Text>
+        </Link>
+
+        {/* Logout Button */}
+        <TouchableOpacity
+          className="flex-row items-center mb-6"
+          onPress={logout}
+        >
+          <Image
+            source={icons.logout}
+            className="w-6 h-6 mr-3"
+            resizeMode="contain"
+          />
+          <Text className="text-lg font-psemibold text-white">Logout</Text>
+        </TouchableOpacity>
+      </View>
+
       <StatusBar backgroundColor="#161622" style="light" />
     </SafeAreaView>
-  )
-}
+  );
+};
 
 export default Settings

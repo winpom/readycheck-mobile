@@ -1,6 +1,7 @@
 import { View, Image, Text, FlatList, TouchableOpacity } from "react-native"
 import { React } from "react"
 import { SafeAreaView } from "react-native-safe-area-context"
+import { router } from "expo-router";
 
 import RCEmptyState from "../../components/RCEmptyState"
 import { getOwnedReadyChecks, getInvitedReadyChecks } from "../../lib/appwrite"
@@ -17,6 +18,20 @@ const Profile = () => {
 
   return (
     <SafeAreaView className="bg-primary h-full">
+      {/* Header with Back and Edit Buttons */}
+      <View className="flex-row justify-between items-center px-4 py-4">
+        {/* Back Button */}
+        <TouchableOpacity onPress={() => router.back()}>
+          <Text style={{ color: 'white', fontSize: 18 }}>Back</Text>
+        </TouchableOpacity>
+
+        {/* Edit Button */}
+        <TouchableOpacity onPress={() => {
+          console.log("Edit button pressed");
+        }}>
+          <Text style={{ color: 'white', fontSize: 18 }}>Edit</Text>
+        </TouchableOpacity>
+      </View>
       <FlatList
         data={activeReadychecks}
         keyExtractor={(item) => item.$id}
@@ -24,7 +39,7 @@ const Profile = () => {
           <ReadyCheckCard readycheck={item} />
         )}
         ListHeaderComponent={() => (
-          <View className="w-full justify-center items-center mt-6 mb-12 px-4">
+          <View className="w-full justify-center items-center mt-6 mb-5 px-4">
             <View className="w-16 h-16 border border-secondary rounded-lg justify-center items-center">
               <Image
                 source={{ uri: user?.avatar }}
