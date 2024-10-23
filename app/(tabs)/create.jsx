@@ -18,6 +18,8 @@ const CreateReadyCheck = () => {
     invitees: "",
   })
 
+  const submit = () => {}
+
   return (
     <SafeAreaView className="bg-primary h-full">
       <ScrollView className="px-4 my-6">
@@ -41,7 +43,7 @@ const CreateReadyCheck = () => {
           placeholder="Let people know what's up..."
           handleChangeText={(e) => setForm({
             ...form,
-            title: e,
+            timing: e,
           })}
           otherStyles="mt-3"
         />
@@ -51,7 +53,7 @@ const CreateReadyCheck = () => {
           placeholder="Let people know what's up..."
           handleChangeText={(e) => setForm({
             ...form,
-            title: e,
+            activity: e,
           })}
           otherStyles="mt-3"
         />
@@ -61,7 +63,7 @@ const CreateReadyCheck = () => {
           placeholder="Let people know what's up..."
           handleChangeText={(e) => setForm({
             ...form,
-            title: e,
+            description: e,
           })}
           otherStyles="mt-3"
         />
@@ -71,18 +73,18 @@ const CreateReadyCheck = () => {
           placeholder="Let people know what's up..."
           handleChangeText={(e) => setForm({
             ...form,
-            title: e,
+            invitees: e,
           })}
           otherStyles="mt-3"
         />
-        <View className="mt-7 space-y-2">
-          <Text>
-
-          </Text>
-        </View>
+        <CustomButton
+          title="Create"
+          handlePress={submit}
+          containerStyles="mt-7"
+          isLoading={uploading} />
       </ScrollView>
     </SafeAreaView>
   )
-}
+};
 
 export default CreateReadyCheck
