@@ -68,7 +68,7 @@ const TabsLayout = () => {
           }}
         />
         <Tabs.Screen
-          name="create"
+          name="createReadyCheck"
           options={{
             title: "Create",
             headerShown: false,
