@@ -7,6 +7,8 @@ import { FormField, CustomButton } from "../../components";
 import SelectFriends from "../../components/SelectFriends";
 import { createReadyCheck, getAllUsers } from "../../lib/appwrite";
 
+import { icons } from "../../constants";
+
 const CreateReadyCheck = () => {
   const [uploading, setUploading] = useState(false);
   const [users, setUsers] = useState([]);
@@ -53,26 +55,26 @@ const CreateReadyCheck = () => {
   };
 
   return (
-    <SafeAreaView className="bg-primary h-full">
-      <ScrollView className="white px-4 my-6">
+    <SafeAreaView className="bg-primary h-[100vh]">
+      <ScrollView className="flex-1 px-4 my-6">
         <Text className="text-2xl text-secondary font-psemibold pt-5">
           Create New ReadyCheck
         </Text>
         <FormField
 
-          title="Title"
+          title="Title*"
           value={form.title}
-          placeholder="Let people know what's up..."
+          placeholder="Get people excited"
           handleChangeText={(e) => setForm({
             ...form,
             title: e,
           })}
-          otherStyles="mt-7"
+          otherStyles="mt-4"
         />
         <FormField
-          title="Timing"
+          title="Timing*"
           value={form.timing}
-          placeholder="Let people know what's up..."
+          placeholder="When's this happening?"
           handleChangeText={(e) => setForm({
             ...form,
             timing: e,
@@ -82,7 +84,7 @@ const CreateReadyCheck = () => {
         <FormField
           title="Activity"
           value={form.activity}
-          placeholder="Let people know what's up..."
+          placeholder="What are we doing?"
           handleChangeText={(e) => setForm({
             ...form,
             activity: e,
@@ -99,14 +101,20 @@ const CreateReadyCheck = () => {
           })}
           otherStyles="mt-3"
         />
-         {/* Invitees Selection */}
-         <Text className="text-lg text-gray-100 mt-3 font-regular">Invitees</Text>
-        <TouchableOpacity
-          onPress={() => setShowInviteesModal(true)}
-          className="border-2 border-gray-300 rounded-lg bg-gray-100 p-4 mt-2"
-        >
-          <Text className="text-gray-700">{form.invitees.length ? "Edit Invitees" : "Select Invitees"}</Text>
-        </TouchableOpacity>
+        {/* Invitees Selection */}
+        <View className="space-y-2 mt-3">
+          <Text className="text-base text-gray-100 font-pmedium">Invitees*</Text>
+
+          <TouchableOpacity
+            onPress={() => setShowInviteesModal(true)}
+            className="border-2 border-black-200 w-full h-16 px-4 bg-black-100 rounded-2xl flex-row items-center"
+          >
+            <Text className="flex-1 text-gray-300 font-plight italic">
+              {form.invitees.length ? `${form.invitees.length} Selected` : "Select Invitees"}
+            </Text>
+            <Image source={icons.chevronDown} className="w-5 h-5 text-gray-400" />
+          </TouchableOpacity>
+        </View>
 
         {/* Display Selected Invitees as Avatars */}
         <View className="flex flex-row flex-wrap mt-3">
@@ -138,7 +146,6 @@ const CreateReadyCheck = () => {
         />
         <CustomButton title="Create" handlePress={submit} containerStyles="mt-7" isLoading={uploading} />
       </ScrollView>
-      <StatusBar backgroundColor="#161622" style="light" />
     </SafeAreaView>
   );
 };
