@@ -7,10 +7,13 @@ import { icons } from "../constants";
 const ReadyCheckCard = ({ readycheck }) => {
     const {
         title = "Untitled",
-        activity = "Unknown Activity",
         timing = "Unknown Time",
-        owner: { username = "Anonymous", avatar = icons.defaultAvatar } = {}, // Default values for owner
-    } = readycheck || {}; // Fallback to empty object if readycheck is undefined
+        owner = {}, // Fallback to empty object if owner is missing
+    } = readycheck || {};
+
+    const username = owner.username || "Anonymous";
+    const avatar = owner.avatar || icons.defaultAvatar;
+    const { time, date } = formatTiming(timing);
 
     return (
         <View className="flex-col items-center px-4 mb-14">
@@ -32,14 +35,17 @@ const ReadyCheckCard = ({ readycheck }) => {
                         </Text>
                     </View>
                 </View>
-                <View className="justify-center flex-w ml-3 gap-y-1">
-                    <Text className="text-white font-psemibold text-sm" numberOfLines={1}>
-                        {activity}
+                
+                {/* Display time over date */}
+                <View className="justify-center flex-end flex-w ml-3 gap-y-1 gap-x-20">
+                    <Text className="text-xs text-gray-100 font-pregular">
+                        {time},
                     </Text>
-                    <Text className="text-xs text-gray-100 font-pregular" numberOfLines={1}>
-                        {formatTiming(timing)}
+                    <Text className="text-xs text-gray-100 font-pregular">
+                        {date}
                     </Text>
                 </View>
+                
                 <View className="pt-2">
                     <Image
                         source={icons.menu}
@@ -50,6 +56,6 @@ const ReadyCheckCard = ({ readycheck }) => {
             </View>
         </View>
     );
-}
+};
 
 export default ReadyCheckCard;

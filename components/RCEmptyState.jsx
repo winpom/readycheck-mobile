@@ -23,7 +23,7 @@ const SearchEmptyState = ({ title, subtitle }) => {
 
             <CustomButton
                 title="Create ReadyCheck"
-                handlePress={() => router.push("/create")}
+                handlePress={() => router.push("/createReadyCheck")}
                 containerStyles="w-full my-5"
             />
         </View>

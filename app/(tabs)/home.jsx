@@ -1,6 +1,7 @@
 import { View, Text, FlatList, Image, RefreshControl, Alert } from "react-native"
 import { React, useState, useEffect } from "react"
 import { SafeAreaView } from "react-native-safe-area-context"
+import { StatusBar } from "expo-status-bar";
 
 import RCEmptyState from "../../components/RCEmptyState"
 import Upcoming from "../../components/Upcoming"
@@ -25,6 +26,7 @@ const Home = () => {
 
   return (
     <SafeAreaView className="bg-primary h-full pt-5">
+      <StatusBar backgroundColor="#161622" style="light" />
       <FlatList
         data={readychecks}
         keyExtractor={(item) => item.$id}
@@ -56,7 +58,7 @@ const Home = () => {
                 Upcoming ReadyChecks
               </Text>
 
-              <Upcoming readychecks={latestReadychecks ?? []}/>
+              <Upcoming readychecks={latestReadychecks ?? []} />
 
             </View>
           </View>
