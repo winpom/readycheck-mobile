@@ -1,26 +1,26 @@
-import { View, Text, ScrollView, TouchableOpacity, Alert } from "react-native";
+import { View, Text, ScrollView, TouchableOpacity, Image } from "react-native"
 import React, { useState, useEffect } from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { FormField, CustomButton } from "../../components";
+import { SafeAreaView } from "react-native-safe-area-context"
+import { FormField, CustomButton } from "../../components"
 import MultiSelect from "react-native-multiple-select";
-import DateTimePicker from '@react-native-community/datetimepicker';
-import { router } from 'expo-router';
 
-import { icons } from "../../constants";
 import { createReadyCheck, getAllUsers } from "../../lib/appwrite";
-import { formatTiming } from '../../utils/formatTiming';
+import { icons } from "../../constants"
 
 const CreateReadyCheck = () => {
-  const [submitting, setSubmitting] = useState(false);
-  const [showDatePicker, setShowDatePicker] = useState(false);
+  // use this for profile image upload
+  const [uploading, setUploading] = useState(false)
   const [users, setUsers] = useState([]);
+
+
   const [form, setForm] = useState({
     title: "",
     timing: "",
     activity: "",
     description: "",
+    owner: "",
     invitees: [],
-  });
+  })
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -63,33 +63,15 @@ const CreateReadyCheck = () => {
     }
   };
 
-  const handleDateChange = (event, selectedDate) => {
-    setShowDatePicker(false);
-    if (selectedDate) {
-      setForm({
-        ...form,
-        timing: selectedDate.toISOString(),
-      });
-    }
-  };
-
-  const setToCurrentDateTime = () => {
-    setShowDatePicker(false);
-    const currentDate = new Date();
-    setForm({
-      ...form,
-      timing: currentDate.toISOString(),
-    });
-  };
 
   return (
     <SafeAreaView className="bg-primary h-full">
-      <ScrollView className="px-4 my-6">
-        <Text className="text-2xl text-secondary font-semibold pt-5">
+      <ScrollView className="white px-4 my-6">
+        <Text className="text-2xl text-secondary font-psemibold pt-5">
           Create New ReadyCheck
         </Text>
-
         <FormField
+
           title="Title"
           value={form.title}
           placeholder="Let people know what's up..."
@@ -99,31 +81,16 @@ const CreateReadyCheck = () => {
           })}
           otherStyles="mt-10"
         />
-
-        <TouchableOpacity onPress={() => setShowDatePicker(true)}>
-          <FormField
-            title="Timing"
-            value={form.timing ? formatTiming(form.timing) : ""}
-            placeholder="Select date and time"
-            editable={false}
-            otherStyles="mt-3"
-          />
-        </TouchableOpacity>
-
-        <TouchableOpacity onPress={setToCurrentDateTime} className="mt-2">
-          <Text className="text-blue-500">Set to Right Now</Text>
-        </TouchableOpacity>
-
-        {showDatePicker && (
-          <DateTimePicker
-            value={form.timing ? new Date(form.timing) : new Date()}
-            mode="datetime"
-            display="default"
-            onChange={handleDateChange}
-            minimumDate={new Date()}
-          />
-        )}
-
+        <FormField
+          title="Timing"
+          value={form.timing}
+          placeholder="Let people know what's up..."
+          handleChangeText={(e) => setForm({
+            ...form,
+            timing: e,
+          })}
+          otherStyles="mt-3"
+        />
         <FormField
           title="Activity"
           value={form.activity}
@@ -134,7 +101,6 @@ const CreateReadyCheck = () => {
           })}
           otherStyles="mt-3"
         />
-
         <FormField
           title="Description"
           value={form.description}
@@ -145,7 +111,6 @@ const CreateReadyCheck = () => {
           })}
           otherStyles="mt-3"
         />
-
         {/* Multi-Select for Invitees */}
         <Text className="text-lg text-secondary mt-3 mb-1">Invitees</Text>
         <MultiSelect
@@ -182,11 +147,10 @@ const CreateReadyCheck = () => {
           title="Create"
           handlePress={submit}
           containerStyles="mt-7"
-          isLoading={submitting}
-        />
+          isLoading={uploading} />
       </ScrollView>
     </SafeAreaView>
-  );
+  )
 };
 
-export default CreateReadyCheck;
+export default CreateReadyCheck
