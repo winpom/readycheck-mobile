@@ -6,7 +6,7 @@ import { getFriends } from "../lib/appwrite";
 import useAppwrite from "../lib/useAppwrite";
 import UserCard from "./UserCard";
 
-import { images } from "../constants"
+import { images } from "../constants";
 
 const FriendsList = () => {
   const { user } = useGlobalContext();
@@ -25,10 +25,8 @@ const FriendsList = () => {
       <StatusBar backgroundColor="#161622" style="light" />
       <FlatList
         data={friends}
-        keyExtractor={(item) => item.$id}
-        renderItem={({ item }) => (
-          <UserCard user={item} />
-        )}
+        keyExtractor={(item) => item.id || item.$id} // Ensure a unique key, fallback to item.$id if necessary
+        renderItem={({ item }) => <UserCard user={item} />}
         ListHeaderComponent={() => (
           <View className="my-6 px-4">
             <Text className="text-gray-100 text-lg font-pregular mb-2">

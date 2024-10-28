@@ -2,36 +2,32 @@ import { View, Image, Text, FlatList, TouchableOpacity, Alert } from 'react-nati
 import React, { useEffect, useState } from 'react';
 import { useLocalSearchParams, router } from "expo-router";
 import { SafeAreaView } from 'react-native-safe-area-context';
-
-import { getOwnedReadyChecks, getUserById, addFriend, removeFriend } from '../../lib/appwrite';
+import { getOwnedReadyChecks, getUserById, addFriend, removeFriend, isFriend } from '../../lib/appwrite';
 import useAppwrite from '../../lib/useAppwrite';
 import { useGlobalContext } from '../../context/GlobalProvider';
-
 import ReadyCheckCard from '../../components/ReadyCheckCard';
 import InfoBox from '../../components/InfoBox';
 import RCEmptyState from '../../components/RCEmptyState';
 
 const OtherProfile = () => {
-  const { userId } = useLocalSearchParams(); // Retrieve `userId` from route
+  const { userId } = useLocalSearchParams(); 
   const { user: currentUser } = useGlobalContext();
   const [profileUser, setProfileUser] = useState(null);
-  const [isFriend, setIsFriend] = useState(false);
+  const [isFriendStatus, setIsFriendStatus] = useState(false);
   const { data: activeReadychecks } = useAppwrite(() => getOwnedReadyChecks(userId));
 
   useEffect(() => {
     // Fetch the clicked user's profile
     getUserById(userId).then(setProfileUser);
 
-    // Check if user is already a friend
-    if (currentUser?.friends.includes(userId)) {
-      setIsFriend(true);
-    }
+    // Check if the clicked user is already a friend
+    isFriend(currentUser.$id, userId).then(setIsFriendStatus);
   }, [userId, currentUser]);
 
   const handleAddFriend = async () => {
     try {
       await addFriend(currentUser.$id, userId);
-      setIsFriend(true);
+      setIsFriendStatus(true);
       Alert.alert("Friend added!");
     } catch (error) {
       console.error(error);
@@ -42,7 +38,7 @@ const OtherProfile = () => {
   const handleRemoveFriend = async () => {
     try {
       await removeFriend(currentUser.$id, userId);
-      setIsFriend(false);
+      setIsFriendStatus(false);
       Alert.alert("Friend removed.");
     } catch (error) {
       console.error(error);
@@ -50,7 +46,7 @@ const OtherProfile = () => {
     }
   };
 
-  if (!profileUser) return null; // Render nothing until data loads
+  if (!profileUser) return null;
 
   return (
     <SafeAreaView className="bg-primary h-full">
@@ -90,7 +86,7 @@ const OtherProfile = () => {
                 titleStyles="text-xl"
               />
             </View>
-            {!isFriend ? (
+            {!isFriendStatus ? (
               <TouchableOpacity onPress={handleAddFriend} className="mt-4 p-2 bg-blue-500 rounded">
                 <Text className="text-center text-white">Add Friend</Text>
               </TouchableOpacity>
