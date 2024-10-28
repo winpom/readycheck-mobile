@@ -16,9 +16,9 @@ const ReadyCheckCard = ({ readycheck }) => {
     const { time, date } = formatTiming(timing);
 
     return (
-        <View className="flex-col items-center px-4 mb-14">
+        <View className="flex-col px-4 mb-14 ">
             <View className="flex-row gap-3 items-start">
-                <View className="justify-center items-center flex-row flex-1">
+                <View className="flex-row flex-1">
                     <View className="w-[46px] h-[46px] rounded-lg border border-secondary justify-center items-center p-0.5">
                         <Image
                             source={{ uri: avatar }}

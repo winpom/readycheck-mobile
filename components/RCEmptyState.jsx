@@ -5,8 +5,7 @@ import React from "react"
 import { images } from "../constants"
 import CustomButton from "./CustomButton"
 
-
-const SearchEmptyState = ({ title, subtitle }) => {
+const RCEmptyState = ({ title, subtitle }) => {
     return (
         <View className="justify-center items-center px-4">
             <Image
@@ -20,14 +19,13 @@ const SearchEmptyState = ({ title, subtitle }) => {
             <Text className="font-pmedium text-sm text-gray-100">
                 {subtitle}
             </Text>
-
             <CustomButton
                 title="Create ReadyCheck"
-                handlePress={() => router.push("/createReadyCheck")}
+                handlePress={() => router.push("/create")}
                 containerStyles="w-full my-5"
             />
         </View>
     )
 }
 
-export default SearchEmptyState
+export default RCEmptyState

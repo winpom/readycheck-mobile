@@ -3,12 +3,13 @@ import { React, useEffect } from "react"
 import { SafeAreaView } from "react-native-safe-area-context"
 import { router } from 'expo-router';
 
-import SearchEmptyState from "../../components/SearchEmptyState"
 import UserCard from "../../components/UserCard"
 import { searchUsers } from "../../lib/appwrite"
 import useAppwrite from "../../lib/useAppwrite"
 import { useLocalSearchParams } from "expo-router"
 import SearchInput from "../../components/SearchInput"
+
+import { images } from "../../constants"
 
 const Search = () => {
   const { query } = useLocalSearchParams()
@@ -43,9 +44,19 @@ const Search = () => {
           </View>
         )}
         ListEmptyComponent={() => (
-          <SearchEmptyState
-            title="No Users Found"
-            subtitle="Try searching something else" />
+          <View className="justify-center items-center px-4">
+            <Image
+              source={images.empty}
+              className="w-[270px] h-[215px]"
+              resizeMode="contain"
+            />
+            <Text className="text-2xl text-center font-psemibold text-white mt-2">
+              No Users Found
+            </Text>
+            <Text className="font-pmedium text-sm text-gray-100">
+              Try searching something else
+            </Text>
+          </View>
         )}
       />
     </SafeAreaView>
