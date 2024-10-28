@@ -2,28 +2,29 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, Modal, TouchableOpacity, ScrollView, Alert, Image } from 'react-native';
 import { CheckBox } from 'react-native-elements';
 import { SafeAreaView } from 'react-native-safe-area-context';
-
-import { getAllUsers } from "../lib/appwrite";
+import { useGlobalContext } from '../context/GlobalProvider';
+import { getFriends } from "../lib/appwrite";
 
 const SelectFriends = ({ selectedUsers, setSelectedUsers, visible, setVisible }) => {
-  const [users, setUsers] = useState([]);
+  const { user } = useGlobalContext();
+  const [friends, setFriends] = useState([]);
   const [tempSelectedUsers, setTempSelectedUsers] = useState([...selectedUsers]);
 
   useEffect(() => {
-    const fetchUsers = async () => {
+    const fetchFriends = async () => {
       try {
-        const response = await getAllUsers();
-        setUsers(response.map(user => ({
-          id: user.id,
-          username: user.name,
-          avatarUrl: user.avatarUrl, // Ensure avatarUrl is available
+        const response = await getFriends(user.$id);
+        setFriends(response.map(friend => ({
+          id: friend.id,
+          username: friend.username,
+          avatarUrl: friend.avatar,
         })));
       } catch (error) {
-        Alert.alert("Error", "Could not load users.");
+        Alert.alert("Error", "Could not load friends.");
       }
     };
-    fetchUsers();
-  }, []);
+    fetchFriends();
+  }, [user.$id]);
 
   const toggleUserSelection = (userId) => {
     if (tempSelectedUsers.includes(userId)) {
@@ -49,28 +50,28 @@ const SelectFriends = ({ selectedUsers, setSelectedUsers, visible, setVisible })
         <View className="bg-white rounded-lg p-4 w-4/5 max-h-[80%]">
           <Text className="text-lg font-bold mb-4 text-center">Select Friends</Text>
           <ScrollView>
-            {users.map(user => (
+            {friends.map(friend => (
               <TouchableOpacity
-                key={user.id}
+                key={friend.id}
                 className="flex-row items-center"
-                onPress={() => toggleUserSelection(user.id)}
+                onPress={() => toggleUserSelection(friend.id)}
               >
                 <CheckBox
-                  checked={tempSelectedUsers.includes(user.id)}
-                  onPress={() => toggleUserSelection(user.id)}
+                  checked={tempSelectedUsers.includes(friend.id)}
+                  onPress={() => toggleUserSelection(friend.id)}
                   containerStyle={{ marginRight: 10, padding: 0 }}
                 />
-                {user.avatarUrl ? (
+                {friend.avatarUrl ? (
                   <Image
-                    source={{ uri: user.avatarUrl }}
+                    source={{ uri: friend.avatarUrl }}
                     className="w-8 h-8 rounded-full mr-3"
                   />
                 ) : (
                   <View className="w-8 h-8 rounded-full bg-gray-300 mr-3 flex items-center justify-center">
-                    <Text className="text-gray-700">{user.username[0]}</Text>
+                    <Text className="text-gray-700">{friend.username[0]}</Text>
                   </View>
                 )}
-                <Text className="text-gray-800">{user.username}</Text>
+                <Text className="text-gray-800">{friend.username}</Text>
               </TouchableOpacity>
             ))}
           </ScrollView>
