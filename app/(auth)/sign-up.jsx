@@ -5,6 +5,7 @@ import { Link, router } from "expo-router"
 
 import { images } from "../../constants"
 import { FormField, CustomButton } from "../../components"
+import { useGlobalContext } from "../../context/GlobalProvider"
 
 import { createUser } from "../../lib/appwrite"
 

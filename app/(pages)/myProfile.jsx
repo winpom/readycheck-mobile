@@ -2,9 +2,9 @@ import { View, Image, Text, FlatList, TouchableOpacity } from 'react-native';
 import React, { useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
-import * as DocumentPicker from 'expo-document-picker';
+import * as ImagePicker from 'expo-image-picker';
 
-import { getOwnedReadyChecks, getInvitedReadyChecks, uploadProfileImage } from '../../lib/appwrite';
+import { getOwnedReadyChecks, getInvitedReadyChecks, uploadProfileImage, getFriends } from '../../lib/appwrite';
 import useAppwrite from '../../lib/useAppwrite';
 import { useGlobalContext } from '../../context/GlobalProvider';
 
@@ -18,6 +18,8 @@ import { icons } from '../../constants';
 const OwnedProfile = () => {
   const { user, setUser, setIsLoggedIn } = useGlobalContext();
   const { data: activeReadychecks } = useAppwrite(() => getOwnedReadyChecks(user.$id));
+  const { data: friends } = useAppwrite(() => getFriends(user.$id));
+
 
   const [uploading, setUploading] = useState(false);
   const [editing, setEditing] = useState(false); // Renamed from isEditing to setEditing
@@ -28,18 +30,16 @@ const OwnedProfile = () => {
   });
 
   const openPicker = async (selectType) => {
-    const result = await DocumentPicker.getDocumentAsync({
-      type: ['image/png', 'image/jpg'],
-    })
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      aspect: [4, 3],
+      quality: 0.5,
+    });
 
     if (!result.canceled) {
       if (selectType === 'image') {
         setForm({ ...form, profileImage: result.assets[0] })
       }
-    } else {
-      setTimeout(() => {
-        Alert.alert('Document picked', JSON.stringify(result, null, 2))
-      }, 100)
     }
   };
 
@@ -132,7 +132,7 @@ const OwnedProfile = () => {
               containerStyles="mt-5"
               titleStyles="text-lg"
             />
-            <View className="mt-5 flex-row">
+            <View className="mt-5 flex-row items-center">
               <InfoBox
                 title={activeReadychecks?.length || 0}
                 subtitle="ReadyChecks"
@@ -140,7 +140,7 @@ const OwnedProfile = () => {
                 titleStyles="text-xl"
               />
               <InfoBox
-                title="7"
+                title={friends?.length || 0}
                 subtitle="Friends"
                 titleStyles="text-xl"
               />

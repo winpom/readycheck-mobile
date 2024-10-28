@@ -5,7 +5,10 @@ import React from "react"
 import { icons } from "../../constants";
 
 const TabIcon = ({ icon, color, name, focused }) => {
-const iconSize = name === "Social" ? "w-8 h-6" : "w-6 h-6";
+const iconSize = name === "Social" ? "w-9 h-8 -mb-2" : "w-6 h-6";
+const fontStyle = name === "Social" ? "mt-1" : "w-6 h-6";
+
+
   return (
     <View className="items-center justify-center gap-1">
       <Image

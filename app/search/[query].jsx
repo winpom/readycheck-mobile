@@ -1,6 +1,7 @@
-import { View, Text, FlatList } from "react-native"
+import { View, Text, FlatList, TouchableOpacity } from "react-native"
 import { React, useEffect } from "react"
 import { SafeAreaView } from "react-native-safe-area-context"
+import { router } from 'expo-router';
 
 import SearchEmptyState from "../../components/SearchEmptyState"
 import UserCard from "../../components/UserCard"
@@ -27,6 +28,9 @@ const Search = () => {
         )}
         ListHeaderComponent={() => (
           <View className="my-6 px-4">
+            <TouchableOpacity onPress={() => router.back()}>
+              <Text className="text-white text-right text-lg">Back</Text>
+            </TouchableOpacity>
             <Text className="font-pmedium text-sm text-gray-100">
               Search Results
             </Text>

@@ -26,7 +26,7 @@ const Settings = () => {
       <Text className="text-secondary text-3xl text-center mb-8">Settings</Text>
       <View className="flex-col px-6">
         {/* Profile Link */}
-        <Link href="/ownedProfile" className="flex-row items-center mb-6">
+        <Link href="/myProfile" className="flex-row items-center mb-6">
           <Image
             source={icons.profile}
             className="w-6 h-6 mr-3"
