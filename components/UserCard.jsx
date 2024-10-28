@@ -5,23 +5,15 @@ import { useGlobalContext } from "../context/GlobalProvider";
 import { icons } from "../constants";
 
 const UserCard = ({ user }) => {
-    const { user: currentUser } = useGlobalContext();
-    const router = useRouter();
+  const router = useRouter();
+  const { user: currentUser } = useGlobalContext();
 
-    // Check if there’s user data; if not, return null
-    if (!user) return null;
-
-    const isCurrentUser = user.$id === currentUser?.$id;
-    const navigateToProfile = () => {
-        if (isCurrentUser) {
-            router.push("/myProfile");
-        } else {
-            router.push(`/${user.$id}`);
-        }
-    };
+  // Determine if navigating to the clicked user’s profile or current user's profile
+  const isCurrentUser = user?.id === currentUser?.$id;
+  const href = isCurrentUser ? "/myProfile" : `/${user.id}`;
 
     return (
-        <TouchableOpacity onPress={navigateToProfile} className="mb-4 p-4 bg-gray-800 rounded-lg flex-row items-center">
+        <TouchableOpacity onPress={() => router.push(href)} className="mb-4 p-4 bg-gray-800 rounded-lg flex-row items-center">
             <Image
                 source={{ uri: user.avatar || icons.defaultAvatar }}
                 className="w-12 h-12 rounded-full"
