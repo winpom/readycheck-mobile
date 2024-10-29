@@ -2,12 +2,12 @@ import { View, Image, Text, FlatList, TouchableOpacity, Alert } from 'react-nati
 import React, { useEffect, useState } from 'react';
 import { useLocalSearchParams, router } from "expo-router";
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { getOwnedReadyChecks, getUserById, addFriend, removeFriend, isFriend } from '../../lib/appwrite';
-import useAppwrite from '../../lib/useAppwrite';
-import { useGlobalContext } from '../../context/GlobalProvider';
-import ReadyCheckCard from '../../components/ReadyCheckCard';
-import InfoBox from '../../components/InfoBox';
-import RCEmptyState from '../../components/RCEmptyState';
+import { getOwnedReadyChecks, getUserById, addFriend, removeFriend, isFriend } from '../../../lib/appwrite';
+import useAppwrite from '../../../lib/useAppwrite';
+import { useGlobalContext } from '../../../context/GlobalProvider';
+import ReadyCheckCard from '../../../components/ReadyCheckCard';
+import InfoBox from '../../../components/InfoBox';
+import RCEmptyState from '../../../components/RCEmptyState';
 
 const OtherProfile = () => {
   const { userId } = useLocalSearchParams(); 

@@ -10,7 +10,7 @@ const UserCard = ({ user }) => {
 
   // Determine if navigating to the clicked user’s profile or current user's profile
   const isCurrentUser = user?.id === currentUser?.$id;
-  const href = isCurrentUser ? "/myProfile" : `/${user.id}`;
+  const href = isCurrentUser ? "/myProfile" : `user/${user.id}`;
 
     return (
         <TouchableOpacity onPress={() => router.push(href)} className="mb-4 p-4 bg-gray-800 rounded-lg flex-row items-center">
