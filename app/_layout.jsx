@@ -37,6 +37,7 @@ const RootLayout = () => {
         <Stack.Screen name="(pages)/myProfile" options={{ headerShown: false }} />
         <Stack.Screen name="(pages)/user/[userId]" options={{ headerShown: false }} />
         <Stack.Screen name="(pages)/readycheck/[readycheckId]" options={{ headerShown: false }} />
+        <Stack.Screen name="(pages)/edit/[readycheckId]" options={{ headerShown: false }} />
         <Stack.Screen name="search/[query]" options={{ headerShown: false }} />
       </Stack>
     </GlobalProvider>

@@ -8,7 +8,7 @@ import { getFriends } from "../lib/appwrite";
 const SelectFriends = ({ selectedUsers, setSelectedUsers, visible, setVisible }) => {
   const { user } = useGlobalContext();
   const [friends, setFriends] = useState([]);
-  const [tempSelectedUsers, setTempSelectedUsers] = useState([...selectedUsers]);
+  const [tempSelectedUsers, setTempSelectedUsers] = useState([]);
 
   useEffect(() => {
     const fetchFriends = async () => {
@@ -25,6 +25,13 @@ const SelectFriends = ({ selectedUsers, setSelectedUsers, visible, setVisible })
     };
     fetchFriends();
   }, [user.$id]);
+
+  // Update tempSelectedUsers whenever the modal opens with current selected users
+  useEffect(() => {
+    if (visible) {
+      setTempSelectedUsers([...selectedUsers]);
+    }
+  }, [visible, selectedUsers]);
 
   const toggleUserSelection = (userId) => {
     if (tempSelectedUsers.includes(userId)) {
