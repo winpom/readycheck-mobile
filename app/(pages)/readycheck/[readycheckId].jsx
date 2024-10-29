@@ -14,6 +14,8 @@ const LiveReadyCheck = () => {
     const { user } = useGlobalContext();
     const router = useRouter();
 
+    console.log(readycheck)
+
     useEffect(() => {
         if (readycheckId) {
             getReadyCheck(readycheckId)

@@ -62,10 +62,12 @@ const EditReadyCheck = () => {
     return (
         <SafeAreaView className="bg-primary h-full pt-5">
             <View className="px-4">
-                <Text className="text-secondary text-3xl my-2 text-center">Edit ReadyCheck</Text>
-
+                <Text className="text-secondary text-3xl mt-2">Edit ReadyCheck</Text>
+                <Text className="text-xs text-gray-100 font-pextralight">
+                    *Required
+                </Text>
                 <View className="my-4">
-                    <Text className="text-white text-lg">Title*</Text>
+                    <Text className="text-gray-100 text-lg">Title*</Text>
                     <TextInput
                         value={title}
                         onChangeText={setTitle}
@@ -75,8 +77,8 @@ const EditReadyCheck = () => {
                     />
                 </View>
 
-                <View className="mt-3">
-                    <Text className="text-base text-gray-100 font-pmedium">Timing*</Text>
+                <View className="mt-1">
+                    <Text className="mb-1 text-base text-gray-100 font-pmedium">Timing*</Text>
                     <TouchableOpacity
                         onPress={() => setShowTimingModal(true)}
                         className="border-2 border-black-200 w-full h-16 px-4 bg-black-100 rounded-2xl flex-row items-center"
@@ -135,7 +137,7 @@ const EditReadyCheck = () => {
                 )}
 
                 <View className="my-4">
-                    <Text className="text-white text-lg">Description</Text>
+                    <Text className="mb-1 text-gray-100 text-lg">Description</Text>
                     <TextInput
                         value={description}
                         onChangeText={setDescription}
@@ -145,7 +147,7 @@ const EditReadyCheck = () => {
                     />
                 </View>
 
-                <View className="space-y-2 mt-3">
+                <View className="space-y-1 mt-1">
                     <Text className="text-base text-gray-100 font-pmedium">Invitees*</Text>
                     <TouchableOpacity
                         onPress={() => setIsSelectingFriends(true)}

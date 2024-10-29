@@ -21,14 +21,14 @@ const FriendsList = () => {
   };
 
   return (
-    <SafeAreaView className="bg-primary h-full pt-5">
+    <SafeAreaView className="bg-primary h-full">
       <StatusBar backgroundColor="#161622" style="light" />
       <FlatList
         data={friends}
         keyExtractor={(item) => item.id || item.$id} // Ensure a unique key, fallback to item.$id if necessary
         renderItem={({ item }) => <UserCard user={item} />}
         ListHeaderComponent={() => (
-          <View className="my-6 px-4">
+          <View className="mb-3 px-4">
             <Text className="text-gray-100 text-lg font-pregular mb-2">
               Friends List
             </Text>
