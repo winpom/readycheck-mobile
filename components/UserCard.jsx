@@ -8,9 +8,12 @@ const UserCard = ({ user }) => {
   const router = useRouter();
   const { user: currentUser } = useGlobalContext();
 
-  // Determine if navigating to the clicked user’s profile or current user's profile
-  const isCurrentUser = user?.id === currentUser?.$id;
-  const href = isCurrentUser ? "/myProfile" : `user/${user.id}`;
+  // Determine user ID dynamically, prioritizing user.$id for Appwrite ID, and fall back to user.id
+  const userId = user?.$id || user?.id;
+  const isCurrentUser = userId === currentUser?.$id;
+
+  // Construct href based on whether the clicked user is the current user
+  const href = isCurrentUser ? "/myProfile" : `user/${userId}`;
 
     return (
         <TouchableOpacity onPress={() => router.push(href)} className="mb-4 p-4 bg-gray-800 rounded-lg flex-row items-center">

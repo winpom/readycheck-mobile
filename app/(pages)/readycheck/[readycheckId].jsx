@@ -1,8 +1,8 @@
-import { View, Text, Image, TouchableOpacity, FlatList, Alert } from "react-native";
+import { View, Text, TouchableOpacity, FlatList, Alert } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { getReadyCheck, deleteReadyCheck, updateRSVP } from "../../../lib/appwrite";
+import { getReadyCheck, deleteReadyCheck, addOrUpdateRSVP } from "../../../lib/appwrite";
 import { formatTiming } from "../../../utils/formatTiming";
 import UserCard from "../../../components/UserCard";
 import { useGlobalContext } from "../../../context/GlobalProvider";
@@ -17,8 +17,14 @@ const LiveReadyCheck = () => {
     useEffect(() => {
         if (readycheckId) {
             getReadyCheck(readycheckId)
-                .then(setReadyCheck)
-                .catch((error) => console.error(error));
+                .then(data => {
+                    if (data) {
+                        setReadyCheck(data);
+                    } else {
+                        setReadyCheck(null);
+                    }
+                })
+                .catch(error => console.error("Error fetching readycheck:", error));
         }
     }, [readycheckId]);
 
@@ -48,23 +54,24 @@ const LiveReadyCheck = () => {
         return () => clearInterval(intervalId);
     }, [readycheck]);
 
-    const { title, timing, description, owner, invitees, rsvps = [] } = readycheck || {};
+    const { title, timing, description, owner, invitees } = readycheck || {};
+    const safeRSVPs = readycheck?.rsvps || [];
     const { time, date } = formatTiming(timing);
     const isOwner = owner?.$id === user?.$id;
     const isInvitee = invitees?.some(invitee => invitee.$id === user?.$id);
+    const userRSVP = safeRSVPs.find(rsvp => rsvp.userId === user?.$id)?.status || "Pending";
 
-    const userRSVP = rsvps.find(rsvp => rsvp.userId === user?.$id)?.response || "Pending";
-
-    const handleRSVP = async (response) => {
+    const handleRSVP = async (status) => {
         try {
-            await updateRSVP(readycheckId, user.$id, response);
+            await addOrUpdateRSVP(readycheckId, user.$id, status);
             setReadyCheck(prev => ({
                 ...prev,
                 rsvps: prev.rsvps.map(rsvp =>
-                    rsvp.userId === user.$id ? { ...rsvp, response } : rsvp
+                    rsvp.userId === user.$id ? { ...rsvp, status } : rsvp
                 )
             }));
-            Alert.alert("RSVP updated", `You have responded with "${response}"`);
+            Alert.alert("RSVP updated", `You have responded with "${status}"`);
+            router.replace(`/readycheck/${readycheckId}`);
         } catch (error) {
             console.error("Failed to update RSVP:", error);
             Alert.alert("Error", "Failed to update RSVP.");
@@ -80,7 +87,7 @@ const LiveReadyCheck = () => {
                 onPress: async () => {
                     try {
                         await deleteReadyCheck(readycheckId);
-                        router.replace("/"); // Navigate back to the main page or any other appropriate page
+                        router.replace("/");
                     } catch (error) {
                         console.error("Failed to delete ReadyCheck:", error);
                     }
@@ -89,17 +96,15 @@ const LiveReadyCheck = () => {
         ]);
     };
 
-    const handleEdit = () => {
-        router.push(`/edit/${readycheckId}`);
-    };
-
     return (
         <SafeAreaView className="bg-primary h-full pt-5">
             <FlatList
                 data={invitees}
                 keyExtractor={(item) => item.id || item.$id}
-                renderItem={({ item }) => <UserCard user={item} />}
-                ListHeaderComponent={() => (
+                renderItem={({ item }) => {
+                    console.log("Invitee structure:", item); // Log each invitee to verify structure
+                    return <UserCard user={item} />;
+                }} ListHeaderComponent={() => (
                     <View className="px-4">
                         <View className="flex-row justify-between items-center px-4 py-4">
                             <TouchableOpacity onPress={() => router.back()}>
@@ -107,7 +112,7 @@ const LiveReadyCheck = () => {
                             </TouchableOpacity>
                             {isOwner && (
                                 <View className="flex-row gap-4">
-                                    <TouchableOpacity onPress={handleEdit}>
+                                    <TouchableOpacity onPress={() => router.push(`/edit/${readycheckId}`)}>
                                         <Text className="text-blue-500 text-lg">Edit</Text>
                                     </TouchableOpacity>
                                     <TouchableOpacity onPress={handleDelete}>
