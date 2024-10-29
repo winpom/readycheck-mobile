@@ -2,7 +2,7 @@ import { View, Text, Image, TouchableOpacity, FlatList, Alert } from "react-nati
 import React, { useEffect, useState } from "react";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { getReadyCheck, deleteReadyCheck } from "../../../lib/appwrite";
+import { getReadyCheck, deleteReadyCheck, updateRSVP } from "../../../lib/appwrite";
 import { formatTiming } from "../../../utils/formatTiming";
 import UserCard from "../../../components/UserCard";
 import { useGlobalContext } from "../../../context/GlobalProvider";
@@ -13,8 +13,6 @@ const LiveReadyCheck = () => {
     const [timeLeft, setTimeLeft] = useState(null);
     const { user } = useGlobalContext();
     const router = useRouter();
-
-    console.log(readycheck)
 
     useEffect(() => {
         if (readycheckId) {
@@ -45,18 +43,33 @@ const LiveReadyCheck = () => {
             setTimeLeft(`${days}d ${hours}h ${minutes}m ${seconds}s`);
         };
 
-        calculateTimeLeft(); // initial calculation
-
+        calculateTimeLeft();
         const intervalId = setInterval(calculateTimeLeft, 1000);
-
-        return () => clearInterval(intervalId); // cleanup interval on component unmount
+        return () => clearInterval(intervalId);
     }, [readycheck]);
 
-    if (!readycheck) return null;
-
-    const { title, timing, description, owner, invitees } = readycheck;
+    const { title, timing, description, owner, invitees, rsvps = [] } = readycheck || {};
     const { time, date } = formatTiming(timing);
-    const isOwner = owner?.$id === user?.$id; // Check if the current user is the owner
+    const isOwner = owner?.$id === user?.$id;
+    const isInvitee = invitees?.some(invitee => invitee.$id === user?.$id);
+
+    const userRSVP = rsvps.find(rsvp => rsvp.userId === user?.$id)?.response || "Pending";
+
+    const handleRSVP = async (response) => {
+        try {
+            await updateRSVP(readycheckId, user.$id, response);
+            setReadyCheck(prev => ({
+                ...prev,
+                rsvps: prev.rsvps.map(rsvp =>
+                    rsvp.userId === user.$id ? { ...rsvp, response } : rsvp
+                )
+            }));
+            Alert.alert("RSVP updated", `You have responded with "${response}"`);
+        } catch (error) {
+            console.error("Failed to update RSVP:", error);
+            Alert.alert("Error", "Failed to update RSVP.");
+        }
+    };
 
     const handleDelete = () => {
         Alert.alert("Confirm Delete", "Are you sure you want to delete this ReadyCheck?", [
@@ -77,10 +90,7 @@ const LiveReadyCheck = () => {
     };
 
     const handleEdit = () => {
-        router.push({
-            pathname: `/edit/${readycheckId}`,
-            params: { readycheck: JSON.stringify(readycheck) },
-        });
+        router.push(`/edit/${readycheckId}`);
     };
 
     return (
@@ -107,13 +117,28 @@ const LiveReadyCheck = () => {
                             )}
                         </View>
                         <Text className="text-secondary text-3xl my-2 text-center">{title}</Text>
-                        <Text className="text-white text-lg my-2 text-center">
-                            {timeLeft}
-                        </Text>
-                        <Text className="text-white text-lg my-2">Owner: {owner.username}</Text>
+                        <Text className="text-white text-lg my-2 text-center">{timeLeft}</Text>
+                        <Text className="text-white text-lg my-2">Owner: {owner?.username}</Text>
                         <Text className="text-white text-lg my-2">When: {time} on {date}</Text>
                         <Text className="text-white text-lg my-2">Description: {description}</Text>
                         <Text className="text-white text-lg my-2">Invitees:</Text>
+                        {(isOwner || isInvitee) && (
+                            <View className="mt-5">
+                                <Text className="text-white text-lg">RSVP:</Text>
+                                <Text className="text-gray-400 mb-2">Current Status: {userRSVP}</Text>
+                                <View className="flex-row gap-4">
+                                    <TouchableOpacity onPress={() => handleRSVP("I'm Ready")}>
+                                        <Text className="text-green-500">I'm Ready</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity onPress={() => handleRSVP("Maybe")}>
+                                        <Text className="text-yellow-500">Maybe</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity onPress={() => handleRSVP("I can't")}>
+                                        <Text className="text-red-500">I Can't</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+                        )}
                     </View>
                 )}
                 ListEmptyComponent={() => (
