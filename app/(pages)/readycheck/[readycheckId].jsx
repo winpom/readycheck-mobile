@@ -1,15 +1,17 @@
-import { View, Text, Image, TouchableOpacity, FlatList } from "react-native";
+import { View, Text, Image, TouchableOpacity, FlatList, Alert } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { getReadyCheck } from "../../../lib/appwrite";
+import { getReadyCheck, deleteReadyCheck } from "../../../lib/appwrite";
 import { formatTiming } from "../../../utils/formatTiming";
 import UserCard from "../../../components/UserCard";
+import { useGlobalContext } from "../../../context/GlobalProvider";
 
 const LiveReadyCheck = () => {
     const { readycheckId } = useLocalSearchParams();
     const [readycheck, setReadyCheck] = useState(null);
     const [timeLeft, setTimeLeft] = useState(null);
+    const { user } = useGlobalContext();
     const router = useRouter();
 
     useEffect(() => {
@@ -52,6 +54,32 @@ const LiveReadyCheck = () => {
 
     const { title, timing, description, owner, invitees } = readycheck;
     const { time, date } = formatTiming(timing);
+    const isOwner = owner?.$id === user?.$id; // Check if the current user is the owner
+
+    const handleDelete = () => {
+        Alert.alert("Confirm Delete", "Are you sure you want to delete this ReadyCheck?", [
+            { text: "Cancel", style: "cancel" },
+            {
+                text: "Delete",
+                style: "destructive",
+                onPress: async () => {
+                    try {
+                        await deleteReadyCheck(readycheckId);
+                        router.replace("/"); // Navigate back to the main page or any other appropriate page
+                    } catch (error) {
+                        console.error("Failed to delete ReadyCheck:", error);
+                    }
+                },
+            },
+        ]);
+    };
+
+    const handleEdit = () => {
+        router.push({
+            pathname: `/edit/${readycheckId}`,
+            params: { readycheck: JSON.stringify(readycheck) },
+        });
+    };
 
     return (
         <SafeAreaView className="bg-primary h-full pt-5">
@@ -65,6 +93,16 @@ const LiveReadyCheck = () => {
                             <TouchableOpacity onPress={() => router.back()}>
                                 <Text className="text-white text-lg">Back</Text>
                             </TouchableOpacity>
+                            {isOwner && (
+                                <View className="flex-row gap-4">
+                                    <TouchableOpacity onPress={handleEdit}>
+                                        <Text className="text-blue-500 text-lg">Edit</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity onPress={handleDelete}>
+                                        <Text className="text-red-500 text-lg">Delete</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            )}
                         </View>
                         <Text className="text-secondary text-3xl my-2 text-center">{title}</Text>
                         <Text className="text-white text-lg my-2 text-center">
