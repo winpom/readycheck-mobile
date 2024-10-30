@@ -35,18 +35,20 @@ const LiveReadyCheck = () => {
             const now = new Date();
             const eventTime = new Date(readycheck.timing);
             const difference = eventTime - now;
-
-            if (difference <= 0) {
+        
+            if (difference <= -86400000) {
+                setTimeLeft("Expired");
+            } else if (difference <= 0) {
                 setTimeLeft("It's Time!");
                 return;
+            } else {
+                const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+        
+                setTimeLeft(`${days}d ${hours}h ${minutes}m ${seconds}s`);
             }
-
-            const days = Math.floor(difference / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((difference % (1000 * 60)) / 1000);
-
-            setTimeLeft(`${days}d ${hours}h ${minutes}m ${seconds}s`);
         };
 
         calculateTimeLeft();
