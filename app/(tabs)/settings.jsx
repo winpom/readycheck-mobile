@@ -9,9 +9,10 @@ import { signOut } from "../../lib/appwrite"
 import useAppwrite from "../../lib/useAppwrite"
 import { icons } from "../../constants"
 
-
+import { useGlobalContext } from "../../context/GlobalProvider";
 
 const Settings = () => {
+  const { setUser, setIsLoggedIn } = useGlobalContext();
 
   const logout = async () => {
     await signOut();
