@@ -6,9 +6,7 @@ import { StatusBar } from "expo-status-bar";
 import { router } from "expo-router"
 
 import { signOut } from "../../lib/appwrite"
-import useAppwrite from "../../lib/useAppwrite"
 import { icons } from "../../constants"
-
 import { useGlobalContext } from "../../context/GlobalProvider";
 
 const Settings = () => {
