@@ -1,8 +1,9 @@
 import { View, Text } from "react-native"
 import React from "react"
-import SearchInput from "../../components/SearchInput";
 import { SafeAreaView } from "react-native-safe-area-context"
-import FriendsList from "../../components/FriendsList"
+
+import { FriendsList, SearchInput } from "../../components";
+
 
 const Social = () => {
   return (

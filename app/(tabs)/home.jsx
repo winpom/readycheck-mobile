@@ -3,9 +3,7 @@ import { React, useState, useEffect } from "react"
 import { SafeAreaView } from "react-native-safe-area-context"
 import { StatusBar } from "expo-status-bar";
 
-import RCEmptyState from "../../components/RCEmptyState"
-import Upcoming from "../../components/Upcoming"
-import ReadyCheckCard from "../../components/ReadyCheckCard"
+import { RCEmptyState, Upcoming, ReadyCheckCard } from "../../components";
 import { getReadyChecks, getLatestReadyChecks } from "../../lib/appwrite"
 import { images } from "../../constants"
 import { icons } from "../../constants"

@@ -5,8 +5,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import DateTimePicker from '@react-native-community/datetimepicker';
 
-import { FormField, CustomButton } from "../../components";
-import SelectFriends from "../../components/SelectFriends";
+import { FormField, CustomButton, SelectFriends } from "../../components";
 import { createReadyCheck, getAllUsers } from "../../lib/appwrite";
 import { formatTiming } from "../../utils/formatTiming";
 import { useGlobalContext } from '../../context/GlobalProvider';
