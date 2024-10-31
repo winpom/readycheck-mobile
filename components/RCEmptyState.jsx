@@ -10,7 +10,7 @@ const RCEmptyState = ({ title, subtitle }) => {
         <View className="justify-center items-center px-4">
             <Image
                 source={images.empty}
-                className="w-[270px] h-[215px]"
+                className="w-[240px] h-[150px]"
                 resizeMode="contain"
             />
             <Text className="text-2xl text-center font-psemibold text-white mt-2">
@@ -21,7 +21,7 @@ const RCEmptyState = ({ title, subtitle }) => {
             </Text>
             <CustomButton
                 title="Create ReadyCheck"
-                handlePress={() => router.push("/create")}
+                handlePress={() => router.push("/createReadyCheck")}
                 containerStyles="w-full my-5"
             />
         </View>
