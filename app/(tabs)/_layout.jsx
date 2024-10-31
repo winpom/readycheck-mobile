@@ -73,7 +73,7 @@ const TabsLayout = () => {
           }}
         />
         <Tabs.Screen
-          name="createReadyCheck"
+          name="create"
           options={{
             title: "Create",
             headerShown: false,
@@ -88,7 +88,7 @@ const TabsLayout = () => {
           }}
         />
         <Tabs.Screen
-          name="yourReadyChecks"
+          name="checks"
           options={{
             title: "ReadyChecks",
             headerShown: false,
