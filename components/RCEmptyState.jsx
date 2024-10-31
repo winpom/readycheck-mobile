@@ -7,10 +7,10 @@ import CustomButton from "./CustomButton"
 
 const RCEmptyState = ({ title, subtitle }) => {
     return (
-        <View className="justify-center items-center px-4">
+        <View className="justify-center items-center px-4 -z-10">
             <Image
                 source={images.empty}
-                className="w-[240px] h-[150px]"
+                className="w-[240px] h-[150px] z-1"
                 resizeMode="contain"
             />
             <Text className="text-2xl text-center font-psemibold text-white mt-2">

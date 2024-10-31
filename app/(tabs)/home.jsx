@@ -81,7 +81,7 @@ const Home = () => {
 
               {/* Dropdown Notification List */}
               {isNotificationVisible && (
-                <View className="absolute top-20 right-5 bg-gray-800 rounded-lg shadow-lg w-72 p-4 z-50">
+                <View className="absolute top-7 right-6 bg-gray-800 rounded-lg shadow-lg w-72 p-4 z-50">
                   <Text className="text-lg font-pmedium text-white mb-4">Notifications</Text>
                   <NotificationList />
                 </View>
