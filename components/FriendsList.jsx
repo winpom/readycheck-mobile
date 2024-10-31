@@ -28,7 +28,7 @@ const FriendsList = () => {
         keyExtractor={(item) => item.id || item.$id} // Ensure a unique key, fallback to item.$id if necessary
         renderItem={({ item }) => <UserCard user={item} />}
         ListHeaderComponent={() => (
-          <View className="mb-3 px-4">
+          <View className="mb-2 px-4">
             <Text className="text-gray-100 text-lg font-pregular mb-2">
               Friends List
             </Text>
@@ -45,7 +45,7 @@ const FriendsList = () => {
               No Friends Added
             </Text>
             <Text className="font-pmedium text-sm text-gray-100">
-              Find and add a friend to get started!
+              Add a friend to get started!
             </Text>
           </View>
         )}

@@ -1,4 +1,4 @@
-import { View, Text, FlatList, Image, RefreshControl, Alert } from "react-native"
+import { View, Text, FlatList, Image, RefreshControl, TouchableOpacity } from "react-native"
 import { React, useState, useEffect } from "react"
 import { SafeAreaView } from "react-native-safe-area-context"
 import { StatusBar } from "expo-status-bar";
@@ -8,6 +8,7 @@ import Upcoming from "../../components/Upcoming"
 import ReadyCheckCard from "../../components/ReadyCheckCard"
 import { getReadyChecks, getLatestReadyChecks } from "../../lib/appwrite"
 import { images } from "../../constants"
+import { icons } from "../../constants"
 import useAppwrite from "../../lib/useAppwrite"
 import { useGlobalContext } from "../../context/GlobalProvider"
 
@@ -45,11 +46,14 @@ const Home = () => {
                 </Text>
               </View>
               <View className="mt-1.5">
-                <Image
-                  source={images.logoSmall}
-                  className="w-12 h-12"
-                  resizeMode="contain"
-                />
+                <TouchableOpacity>
+                  <Image
+                    source={icons.notifications}
+                    className="w-7 h-7"
+                    resizeMode="contain"
+                    tintColor="#CDCDE0"
+                  />
+                </TouchableOpacity>
               </View>
             </View>
 

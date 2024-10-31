@@ -7,8 +7,10 @@ import FriendsList from "../../components/FriendsList"
 const Social = () => {
   return (
     <SafeAreaView className="bg-primary h-full pt-10">
-      <Text className="text-secondary text-3xl text-center mb-8">Social</Text>
-      <SearchInput />
+      <Text className="text-secondary text-3xl text-center mb-5">Social</Text>
+      <View className="items-center">
+        <SearchInput />
+      </View>
       <FriendsList />
     </SafeAreaView>
   )

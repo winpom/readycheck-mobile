@@ -13,7 +13,7 @@ import eye from "../assets/icons/eye.png";
 import play from "../assets/icons/play.png";
 import social from "../assets/icons/social.png";
 import settings from "../assets/icons/settings.png";
-
+import notifications from "../assets/icons/notifications.png";
 
 export default {
   play,
@@ -31,4 +31,5 @@ export default {
   eye,
   social,
   settings,
+  notifications,
 };

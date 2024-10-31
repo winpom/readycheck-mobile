@@ -1,26 +1,18 @@
 import { View, FlatList, TouchableOpacity, Text, ActivityIndicator } from "react-native";
-import { React, useState, useEffect } from "react";
+import { React, useState, useEffect, useRef } from "react";
 import * as Animatable from "react-native-animatable";
 import { useRouter } from "expo-router";
 import ReadyCheckCard from "./ReadyCheckCard";
-import { getLatestReadyChecks } from "../lib/appwrite"
+import { getLatestReadyChecks } from "../lib/appwrite";
 
 const zoomIn = {
-  0: {
-    scale: 0.9,
-  },
-  1: {
-    scale: 1,
-  },
+  0: { scale: 0.9 },
+  1: { scale: 1 },
 };
 
 const zoomOut = {
-  0: {
-    scale: 1,
-  },
-  1: {
-    scale: 0.9,
-  },
+  0: { scale: 1 },
+  1: { scale: 0.9 },
 };
 
 const UpcomingReadyCheck = ({ activeReadyCheck, readycheck, onPress }) => {
@@ -48,20 +40,24 @@ const Upcoming = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [activeItem, setActiveItem] = useState(null);
-  const router = useRouter(); 
+  const listRef = useRef(null); // FlatList reference
+  const router = useRouter();
 
   const viewableItemsChanged = ({ viewableItems }) => {
     if (viewableItems.length > 0) {
-      setActiveItem(viewableItems[0].key)
+      setActiveItem(viewableItems[0].key);
     }
-  }
+  };
 
   useEffect(() => {
     const fetchReadyChecks = async () => {
       try {
         const latestReadyChecks = await getLatestReadyChecks();
         setReadychecks(latestReadyChecks);
-        setActiveItem(latestReadyChecks[0]?.$id || null); // Set the first item as active
+        setActiveItem(latestReadyChecks[0]?.$id || null);
+
+        // Scroll to the beginning of the list on load
+        listRef.current?.scrollToOffset({ offset: 0, animated: false });
       } catch (error) {
         setError(error.message);
       } finally {
@@ -72,9 +68,8 @@ const Upcoming = () => {
     fetchReadyChecks();
   }, []);
 
-  // Handle card press
   const handlePress = (readycheckId) => {
-    router.replace(`/readycheck/${readycheckId}`); // Navigate to live page with readycheckId
+    router.replace(`/readycheck/${readycheckId}`);
   };
 
   if (loading) {
@@ -87,6 +82,7 @@ const Upcoming = () => {
 
   return (
     <FlatList
+      ref={listRef} // Attach ref to FlatList
       data={readychecks}
       keyExtractor={(item) => item.$id}
       renderItem={({ item }) => (
@@ -98,9 +94,8 @@ const Upcoming = () => {
       )}
       onViewableItemsChanged={viewableItemsChanged}
       viewabilityConfig={{
-        itemVisiblePercentThreshold: 70
+        itemVisiblePercentThreshold: 70,
       }}
-      contentOffset={{ x: 170 }}
       horizontal
       showsHorizontalScrollIndicator={false}
     />

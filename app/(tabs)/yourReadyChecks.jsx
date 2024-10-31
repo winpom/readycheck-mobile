@@ -5,7 +5,7 @@ import { useGlobalContext } from "../../context/GlobalProvider";
 import { getOwnedReadyChecks, getInvitedReadyChecks } from "../../lib/appwrite";
 import ReadyCheckCard from "../../components/ReadyCheckCard";
 
-const Active = () => {
+const YourReadyChecks = () => {
   const { user } = useGlobalContext();
   const [ownedReadyChecks, setOwnedReadyChecks] = useState([]);
   const [invitedReadyChecks, setInvitedReadyChecks] = useState([]);
@@ -54,7 +54,7 @@ const Active = () => {
   return (
     <SafeAreaView className="bg-primary h-full pt-5">
       <View className="px-4">
-        <Text className="text-secondary text-3xl my-2 text-center">Active ReadyChecks</Text>
+        <Text className="text-secondary text-3xl my-2 text-center">Your ReadyChecks</Text>
 
         {/* Owned ReadyChecks Section */}
         <Text className="text-white text-xl my-4">Owned ReadyChecks</Text>
@@ -63,7 +63,7 @@ const Active = () => {
           keyExtractor={(item) => item.$id}
           renderItem={({ item }) => <ReadyCheckCard readycheck={item} />}
           ListEmptyComponent={() => (
-            <Text className="text-gray-400 text-center">No owned ReadyChecks.</Text>
+            <Text className="text-gray-400 text-center my-2">No owned ReadyChecks.</Text>
           )}
         />
 
@@ -74,7 +74,7 @@ const Active = () => {
           keyExtractor={(item) => item.$id}
           renderItem={({ item }) => <ReadyCheckCard readycheck={item} />}
           ListEmptyComponent={() => (
-            <Text className="text-gray-400 text-center">No invitations to ReadyChecks.</Text>
+            <Text className="text-gray-400 text-center my-2">No invitations to ReadyChecks.</Text>
           )}
         />
         <Text className="text-white text-xl my-4">Archived ReadyChecks</Text>
@@ -91,4 +91,4 @@ const Active = () => {
   );
 };
 
-export default Active;
+export default YourReadyChecks;

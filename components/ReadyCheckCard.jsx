@@ -19,7 +19,7 @@ const ReadyCheckCard = ({ readycheck }) => {
 
     return (
         <TouchableOpacity onPress={() => router.push(`/readycheck/${readycheck.$id}`)} className="">
-            <View className="flex-col px-4 mb-14 ">
+            <View className="flex-col px-4 mb-7 ">
                 <View className="flex-row gap-3 items-start">
                     <View className="flex-row flex-1">
                         <View className="w-[46px] h-[46px] rounded-lg border border-secondary justify-center items-center p-0.5">
@@ -48,14 +48,14 @@ const ReadyCheckCard = ({ readycheck }) => {
                             {date}
                         </Text>
                     </View>
-
+{/* 
                     <View className="pt-2">
                         <Image
                             source={icons.menu}
                             className="w-5 h-5"
                             resizeMode="contain"
                         />
-                    </View>
+                    </View> */}
                 </View>
             </View>
         </TouchableOpacity>
