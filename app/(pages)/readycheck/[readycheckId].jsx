@@ -14,12 +14,17 @@ const LiveReadyCheck = () => {
     const { user } = useGlobalContext();
     const router = useRouter();
 
+    // Track active RSVP status locally
+    const [activeRSVP, setActiveRSVP] = useState("Pending");
+
     useEffect(() => {
         if (readycheckId) {
             getReadyCheck(readycheckId)
                 .then(data => {
                     if (data) {
                         setReadyCheck(data);
+                        const userRSVP = data.rsvps.find(rsvp => rsvp.userId === user?.$id)?.status || "Pending";
+                        setActiveRSVP(userRSVP);
                     } else {
                         setReadyCheck(null);
                     }
@@ -56,22 +61,10 @@ const LiveReadyCheck = () => {
         return () => clearInterval(intervalId);
     }, [readycheck]);
 
-    const { title, timing, description, owner, invitees } = readycheck || {};
-    const safeRSVPs = readycheck?.rsvps || [];
-    const { time, date } = formatTiming(timing);
-    const isOwner = owner?.$id === user?.$id;
-    const isInvitee = invitees?.some(invitee => invitee.$id === user?.$id);
-    const userRSVP = safeRSVPs.find(rsvp => rsvp.userId === user?.$id)?.status || "Pending";
-
     const handleRSVP = async (status) => {
         try {
             await addOrUpdateRSVP(readycheckId, user.$id, status);
-            setReadyCheck(prev => ({
-                ...prev,
-                rsvps: prev.rsvps.map(rsvp =>
-                    rsvp.userId === user.$id ? { ...rsvp, status } : rsvp
-                )
-            }));
+            setActiveRSVP(status); // Set active button
             Alert.alert("RSVP updated", `You have responded with "${status}"`);
             router.replace(`/readycheck/${readycheckId}`);
         } catch (error) {
@@ -98,15 +91,29 @@ const LiveReadyCheck = () => {
         ]);
     };
 
+    // Group invitees by RSVP status
+    const pendingUsers = readycheck?.invitees.filter(invitee =>
+        !readycheck.rsvps.some(rsvp => rsvp.userId === invitee.$id)
+    ) || [];
+
+    const rsvpGroups = {
+        "I'm Ready": readycheck?.rsvps.filter(rsvp => rsvp.status === "I'm Ready").map(rsvp => rsvp.userId) || [],
+        "Maybe": readycheck?.rsvps.filter(rsvp => rsvp.status === "Maybe").map(rsvp => rsvp.userId) || [],
+        "I can't": readycheck?.rsvps.filter(rsvp => rsvp.status === "I can't").map(rsvp => rsvp.userId) || [],
+    };
+
+    const { title, timing, description, owner, invitees } = readycheck || {};
+    const { time, date } = formatTiming(timing);
+    const isOwner = owner?.$id === user?.$id;
+    const isInvitee = invitees?.some(invitee => invitee.$id === user?.$id);
+
     return (
         <SafeAreaView className="bg-primary h-full pt-5">
             <FlatList
                 data={invitees}
                 keyExtractor={(item) => item.id || item.$id}
-                renderItem={({ item }) => {
-                    console.log("Invitee structure:", item); // Log each invitee to verify structure
-                    return <UserCard user={item} />;
-                }} ListHeaderComponent={() => (
+                renderItem={({ item }) => <UserCard user={item} />}
+                ListHeaderComponent={() => (
                     <View className="px-4">
                         <View className="flex-row justify-between items-center px-4 py-4">
                             <TouchableOpacity onPress={() => router.back()}>
@@ -128,21 +135,47 @@ const LiveReadyCheck = () => {
                         <Text className="text-white text-lg my-2">Owner: {owner?.username}</Text>
                         <Text className="text-white text-lg my-2">When: {time} on {date}</Text>
                         <Text className="text-white text-lg my-2">Description: {description}</Text>
-                        <Text className="text-white text-lg my-2">Invitees:</Text>
+
+                        <Text className="text-white text-lg my-2">Invitees (Pending):</Text>
+                        {pendingUsers.map((user) => (
+                            <Text key={user.$id} className="text-gray-400 ml-4">{user.username}</Text>
+                        ))}
+
                         {(isOwner || isInvitee) && (
                             <View className="mt-5">
                                 <Text className="text-white text-lg">RSVP:</Text>
-                                <Text className="text-gray-400 mb-2">Current Status: {userRSVP}</Text>
-                                <View className="flex-row gap-4">
-                                    <TouchableOpacity onPress={() => handleRSVP("I'm Ready")}>
-                                        <Text className="text-green-500">I'm Ready</Text>
+                                <View className="flex-row gap-4 mt-2">
+                                    <TouchableOpacity
+                                        onPress={() => handleRSVP("I'm Ready")}
+                                        className={`px-4 py-2 rounded ${activeRSVP === "I'm Ready" ? "bg-green-500" : "bg-gray-700"}`}
+                                    >
+                                        <Text className="text-white">I'm Ready</Text>
                                     </TouchableOpacity>
-                                    <TouchableOpacity onPress={() => handleRSVP("Maybe")}>
-                                        <Text className="text-yellow-500">Maybe</Text>
+                                    {rsvpGroups["I'm Ready"].map((userId) => (
+                                        <Text key={userId} className="text-gray-400 ml-4">{userId}</Text>
+                                    ))}
+                                </View>
+                                <View className="flex-row gap-4 mt-2">
+                                    <TouchableOpacity
+                                        onPress={() => handleRSVP("Maybe")}
+                                        className={`px-4 py-2 rounded ${activeRSVP === "Maybe" ? "bg-yellow-500" : "bg-gray-700"}`}
+                                    >
+                                        <Text className="text-white">Maybe</Text>
                                     </TouchableOpacity>
-                                    <TouchableOpacity onPress={() => handleRSVP("I can't")}>
-                                        <Text className="text-red-500">I Can't</Text>
+                                    {rsvpGroups["Maybe"].map((userId) => (
+                                        <Text key={userId} className="text-gray-400 ml-4">{userId}</Text>
+                                    ))}
+                                </View>
+                                <View className="flex-row gap-4 mt-2">
+                                    <TouchableOpacity
+                                        onPress={() => handleRSVP("I can't")}
+                                        className={`px-4 py-2 rounded ${activeRSVP === "I can't" ? "bg-red-500" : "bg-gray-700"}`}
+                                    >
+                                        <Text className="text-white">Can't Join</Text>
                                     </TouchableOpacity>
+                                    {rsvpGroups["I can't"].map((userId) => (
+                                        <Text key={userId} className="text-gray-400 ml-4">{userId}</Text>
+                                    ))}
                                 </View>
                             </View>
                         )}
