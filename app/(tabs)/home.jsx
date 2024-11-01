@@ -1,7 +1,8 @@
 import { View, Text, FlatList, Image, RefreshControl, TouchableOpacity, TouchableWithoutFeedback, Alert } from "react-native";
-import { React, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
+import { useRouter } from "expo-router";
 
 import { RCEmptyState, ReadyCheckCard, NotificationList } from "../../components";
 import { getOwnedReadyChecks, getInvitedReadyChecks } from "../../lib/appwrite";
@@ -10,36 +11,44 @@ import { useGlobalContext } from "../../context/GlobalProvider";
 
 const Home = () => {
   const { user } = useGlobalContext();
+  const router = useRouter();
+  
   const [refreshing, setRefreshing] = useState(false);
   const [isNotificationVisible, setIsNotificationVisible] = useState(false);
   const [activeReadyChecks, setActiveReadyChecks] = useState([]);
-
+  
+  // Redirect to sign-in if user is not logged in
   useEffect(() => {
-    const fetchReadyChecks = async () => {
-      try {
-        // Fetch readychecks the user owns and is invited to
-        const owned = await getOwnedReadyChecks(user.$id);
-        const invited = await getInvitedReadyChecks(user.$id);
+    if (!user) {
+      router.replace("/sign-in");
+    }
+  }, [user]);
 
-        // Current time in milliseconds
-        const now = Date.now();
+  // Fetches ready checks if user exists
+  const fetchReadyChecks = async () => {
+    if (!user) return; 
 
-        // Filter to only include ReadyChecks within the last 24 hours
-        const activeReadyChecks = [...owned, ...invited].filter((readycheck) => {
-          const readyCheckTime = new Date(readycheck.timing).getTime();
-          return now - readyCheckTime <= 86400000; // Within the last 24 hours
-        });
+    try {
+      const owned = await getOwnedReadyChecks(user.$id);
+      const invited = await getInvitedReadyChecks(user.$id);
 
-        // Sort active ready checks by timing in descending order
-        setActiveReadyChecks(activeReadyChecks.sort((a, b) => new Date(b.timing) - new Date(a.timing)));
-      } catch (error) {
-        console.error("Error fetching readychecks:", error);
-        Alert.alert("Error", "Could not load ReadyChecks.");
-      }
-    };
+      const now = Date.now();
+      const activeReadyChecks = [...owned, ...invited].filter((readycheck) => {
+        const readyCheckTime = new Date(readycheck.timing).getTime();
+        return now - readyCheckTime <= 86400000; // Within the last 24 hours
+      });
 
+      setActiveReadyChecks(activeReadyChecks.sort((a, b) => new Date(b.timing) - new Date(a.timing)));
+    } catch (error) {
+      console.error("Error fetching readychecks:", error);
+      Alert.alert("Error", "Could not load ReadyChecks.");
+    }
+  };
+
+  // Fetches ready checks on component mount and when `user.$id` changes
+  useEffect(() => {
     fetchReadyChecks();
-  }, [user.$id]);
+  }, [user?.id]);
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -56,6 +65,8 @@ const Home = () => {
       setIsNotificationVisible(false);
     }
   };
+
+  if (!user) return null; // Prevent rendering if user is null
 
   return (
     <TouchableWithoutFeedback onPress={closeNotificationList}>

@@ -21,7 +21,7 @@ const RCEmptyState = ({ title, subtitle }) => {
             </Text>
             <CustomButton
                 title="Create ReadyCheck"
-                handlePress={() => router.push("/createReadyCheck")}
+                handlePress={() => router.push("/create")}
                 containerStyles="w-full my-5"
             />
         </View>

@@ -7,11 +7,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { getOwnedReadyChecks, getInvitedReadyChecks, uploadProfileImage, getFriends } from '../../lib/appwrite';
 import useAppwrite from '../../lib/useAppwrite';
 import { useGlobalContext } from '../../context/GlobalProvider';
-
-import ReadyCheckCard from '../../components/ReadyCheckCard';
-import InfoBox from '../../components/InfoBox';
-import RCEmptyState from '../../components/RCEmptyState';
-import { FormField } from '../../components';
+import {ReadyCheckCard, InfoBox, RCEmptyState, FormField} from '../../components'
 
 import { icons } from '../../constants';
 
@@ -20,9 +16,8 @@ const OwnedProfile = () => {
   const { data: activeReadychecks } = useAppwrite(() => getOwnedReadyChecks(user.$id));
   const { data: friends } = useAppwrite(() => getFriends(user.$id));
 
-
   const [uploading, setUploading] = useState(false);
-  const [editing, setEditing] = useState(false); // Renamed from isEditing to setEditing
+  const [editing, setEditing] = useState(false); 
 
   const [form, setForm] = useState({
     name: '',
@@ -75,7 +70,7 @@ const OwnedProfile = () => {
         </TouchableOpacity>
 
         {/* Edit Button */}
-        <TouchableOpacity onPress={() => setEditing(!editing)}>
+        <TouchableOpacity onPress={() => setEditing(true)}>
           <Text className="text-white text-lg">Edit</Text>
         </TouchableOpacity>
       </View>
