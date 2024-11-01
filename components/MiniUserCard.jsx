@@ -13,7 +13,7 @@ const MiniUserCard = ({ user }) => {
   return (
     <TouchableOpacity
       onPress={() => router.push(href)}
-      className="mt-2 py-1 px-2 bg-gray-800 rounded-lg max-w-[80px]"
+      className="mt-2 mx-1 py-1 px-2 bg-gray-800 rounded-lg max-w-[30vw] flex-row items-center justify-center"
     >
       <View>
         <Text className="text-white font-semibold text-center text-sm">

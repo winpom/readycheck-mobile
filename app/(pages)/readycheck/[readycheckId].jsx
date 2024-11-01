@@ -8,7 +8,7 @@ import MiniUserCard from "../../../components/MiniUserCard";
 import { useGlobalContext } from "../../../context/GlobalProvider";
 
 const LiveReadyCheck = () => {
-    const { readycheckId } = useLocalSearchParams();
+    const { readycheckId, refresh } = useLocalSearchParams();
     const [readycheck, setReadyCheck] = useState(null);
     const [timeLeft, setTimeLeft] = useState(null);
     const { user } = useGlobalContext();
@@ -30,7 +30,7 @@ const LiveReadyCheck = () => {
                 })
                 .catch(error => console.error("Error fetching readycheck:", error));
         }
-    }, [readycheckId]);
+    }, [readycheckId, refresh]);
 
     useEffect(() => {
         if (!readycheck) return;
@@ -142,7 +142,7 @@ const LiveReadyCheck = () => {
                         <Text className="text-secondary text-3xl mt-2 text-center">{title}</Text>
                         <Text className="text-gray-100 text-lg mb-2 text-center">{timeLeft}</Text>
                         <View className="flex-row">
-                            <Text className="text-gray-400 text-lg mt-2 mr-1">Owner:</Text>
+                            <Text className="text-gray-400 text-lg mt-2">Owner:</Text>
                             <MiniUserCard key={user.$id} user={user} />
                         </View>
                         <View className="flex-row">
@@ -154,9 +154,11 @@ const LiveReadyCheck = () => {
                             <Text className="text-white font-psemibold text-lg mt-2 ml-2">{description}</Text>
                         </View>
                         <Text className="text-gray-400 text-lg mt-2">Invitees (Pending):</Text>
-                        {pendingUsers.map((user) => (
-                            <MiniUserCard key={user.$id} user={user} />
-                        ))}
+                        <View className="flex-row flex-wrap">
+                            {pendingUsers.map((user) => (
+                                <MiniUserCard key={user.$id} user={user} />
+                            ))}
+                        </View>
                         <Text className="text-gray-400 text-lg mt-3">RSVPs:</Text>
                         {(isOwner || isInvitee) && (
                             <View className="flex-row justify-between">

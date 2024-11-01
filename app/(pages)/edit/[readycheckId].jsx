@@ -41,7 +41,10 @@ const EditReadyCheck = () => {
         try {
             await updateReadyCheck(readycheckId, { title, timing, description, invitees });
             Alert.alert("Success", "ReadyCheck updated successfully.");
-            router.back();
+            router.push({
+                pathname: `/readycheck/${readycheckId}`,
+                params: { refresh: true },
+            });
         } catch (error) {
             console.error("Failed to update ReadyCheck:", error);
             Alert.alert("Error", "Failed to update ReadyCheck.");
