@@ -52,7 +52,7 @@ const YourReadyChecks = () => {
   }, [user.$id]);
 
   return (
-    <SafeAreaView className="bg-primary h-full pt-5">
+    <SafeAreaView className="bg-primary h-[100vh] pt-5">
       <View className="px-4">
         <Text className="text-secondary text-3xl my-2 text-center">Your ReadyChecks</Text>
 

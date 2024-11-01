@@ -21,7 +21,7 @@ const Settings = () => {
   }
 
   return (
-    <SafeAreaView className="bg-primary h-full pt-10">
+    <SafeAreaView className="bg-primary h-[100vh] pt-10">
       <Text className="text-secondary text-3xl text-center mb-8">Settings</Text>
       <View className="flex-col px-6">
         {/* Profile Link */}

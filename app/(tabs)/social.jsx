@@ -7,7 +7,7 @@ import { FriendsList, SearchInput } from "../../components";
 
 const Social = () => {
   return (
-    <SafeAreaView className="bg-primary h-full pt-10">
+    <SafeAreaView className="bg-primary h-[100vh] pt-10">
       <Text className="text-secondary text-3xl text-center mb-5">Social</Text>
       <View className="items-center">
         <SearchInput />

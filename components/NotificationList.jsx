@@ -1,7 +1,7 @@
 import { View, FlatList, Text, ActivityIndicator } from "react-native";
 import React, { useState, useEffect } from "react";
 import { useRouter } from "expo-router";
-import { getNotifications } from "../lib/appwrite";
+import { getNotifications, markNotificationAsRead } from "../lib/appwrite";
 import NotificationCard from "./NotificationCard";
 
 import { useGlobalContext } from "../context/GlobalProvider"
@@ -18,6 +18,7 @@ const NotificationList = () => {
             try {
                 const latestNotifications = await getNotifications(user.$id);
                 setNotifications(latestNotifications);
+                console.log(latestNotifications)
             } catch (error) {
                 setError(error.message);
             } finally {
@@ -30,8 +31,7 @@ const NotificationList = () => {
 
     const handlePress = async (notification) => {
         try {
-            //   await markNotificationAsRead(notification.$id);
-
+            await markNotificationAsRead(notification.id);
             if (notification.type === "ReadyCheck") {
                 router.push(`/readycheck/${notification.readycheckId}`);
             } else if (notification.type === "FriendInvite") {
