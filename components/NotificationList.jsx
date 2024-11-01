@@ -2,7 +2,7 @@ import { View, FlatList, Text, ActivityIndicator } from "react-native";
 import React, { useState, useEffect } from "react";
 import { useRouter } from "expo-router";
 import { getNotifications } from "../lib/appwrite";
-import { NotificationCard } from "./NotificationCard";
+import NotificationCard from "./NotificationCard";
 
 import { useGlobalContext } from "../context/GlobalProvider"
 
@@ -16,7 +16,7 @@ const NotificationList = () => {
     useEffect(() => {
         const fetchNotifications = async () => {
             try {
-                const latestNotifications = await getNotifications();
+                const latestNotifications = await getNotifications(user.$id);
                 setNotifications(latestNotifications);
             } catch (error) {
                 setError(error.message);
@@ -35,7 +35,7 @@ const NotificationList = () => {
             if (notification.type === "ReadyCheck") {
                 router.push(`/readycheck/${notification.readycheckId}`);
             } else if (notification.type === "FriendInvite") {
-                router.push(`/profile/${notification.senderId}`);
+                router.push(`/user/${notification.senderId.$id}`);
             }
 
             setNotifications((prev) =>
@@ -48,7 +48,7 @@ const NotificationList = () => {
 
     if (loading) {
         return (
-            <View className="flex-1 justify-center items-center bg-primary">
+            <View className="flex-1 justify-left items-center bg-primary">
                 <ActivityIndicator size="large" color="#4B5563" />
             </View>
         );
@@ -73,7 +73,7 @@ const NotificationList = () => {
                     isUnread={item.status === "unread"} // Pass read/unread status
                 />
             )}
-            contentContainerStyle={{ padding: 20, backgroundColor: "#1F2937" }}
+            contentContainerStyle={{ padding: 5, backgroundColor: "#1F2937" }}
             ItemSeparatorComponent={() => <View className="h-4" />}
         />
     );

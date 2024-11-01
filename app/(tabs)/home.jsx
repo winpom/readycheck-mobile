@@ -12,11 +12,11 @@ import { useGlobalContext } from "../../context/GlobalProvider";
 const Home = () => {
   const { user } = useGlobalContext();
   const router = useRouter();
-  
+
   const [refreshing, setRefreshing] = useState(false);
   const [isNotificationVisible, setIsNotificationVisible] = useState(false);
   const [activeReadyChecks, setActiveReadyChecks] = useState([]);
-  
+
   // Redirect to sign-in if user is not logged in
   useEffect(() => {
     if (!user) {
@@ -26,7 +26,7 @@ const Home = () => {
 
   // Fetches ready checks if user exists
   const fetchReadyChecks = async () => {
-    if (!user) return; 
+    if (!user) return;
 
     try {
       const owned = await getOwnedReadyChecks(user.$id);
@@ -72,6 +72,16 @@ const Home = () => {
     <TouchableWithoutFeedback onPress={closeNotificationList}>
       <SafeAreaView className="bg-primary h-full pt-5">
         <StatusBar backgroundColor="#161622" style="light" />
+
+        {/* Notification List Container - Move outside FlatList */}
+        {isNotificationVisible && (
+          <View
+            className="absolute top-32 right-6 bg-gray-800 rounded-lg shadow-lg w-72 p-4 border border-secondary z-50">
+            <Text className="text-lg font-pmedium text-white mb-4">Notifications</Text>
+            <NotificationList />
+          </View>
+        )}
+
         <FlatList
           data={activeReadyChecks}
           keyExtractor={(item) => item.$id}
@@ -89,15 +99,6 @@ const Home = () => {
                   </TouchableOpacity>
                 </View>
               </View>
-
-              {/* Dropdown Notification List */}
-              {isNotificationVisible && (
-                <View className="absolute top-7 right-6 bg-gray-800 rounded-lg shadow-lg w-72 p-4 z-50">
-                  <Text className="text-lg font-pmedium text-white mb-4">Notifications</Text>
-                  <NotificationList />
-                </View>
-              )}
-
               <View className="w-full flex-1 pt-5 pb-8">
                 <Text className="text-gray-100 text-lg font-pregular mb-1">Upcoming ReadyChecks</Text>
               </View>
@@ -110,6 +111,7 @@ const Home = () => {
         />
       </SafeAreaView>
     </TouchableWithoutFeedback>
+
   );
 };
 

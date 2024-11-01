@@ -2,7 +2,19 @@ import { View, Text, Image, TouchableOpacity } from "react-native";
 import React from "react";
 import { icons } from "../constants";
 
+import { formatTiming } from "../utils/formatTiming";
+
 const NotificationCard = ({ notification, onPress }) => {
+
+  const {
+    message = "Untitled",
+    status = "unread",
+    timestamp = "Unknown Time",
+    sender = `${notification.senderId}`, 
+} = notification || {};
+
+  const { time, date } = formatTiming(timestamp);
+
   return (
     <TouchableOpacity
       onPress={onPress}
@@ -10,16 +22,11 @@ const NotificationCard = ({ notification, onPress }) => {
         notification.status === "read" ? "bg-gray-700" : "bg-gray-800"
       }`}
     >
-      <Image
-        source={{ uri: notification.icon || icons.defaultNotification }}
-        className="w-12 h-12 rounded-full"
-        resizeMode="cover"
-      />
       <View className="ml-4">
-        <Text className={`font-semibold text-base ${notification.status === "read" ? "text-gray-400" : "text-white"}`}>
+        <Text numberOfLines={1} className={`text-small ${notification.status === "read" ? "text-gray-400 font-pregular" : "text-white font-semibold"}`}>
           {notification.message}
         </Text>
-        <Text className="text-gray-400 text-sm">{notification.timestamp}</Text>
+        <Text className="text-gray-400 text-sm">{time}, {date}</Text>
       </View>
     </TouchableOpacity>
   );

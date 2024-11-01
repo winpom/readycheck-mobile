@@ -125,7 +125,7 @@ const LiveReadyCheck = () => {
                 ListHeaderComponent={() => (
                     <View className="px-4">
                         <View className="flex-row justify-between items-center px-4 py-4">
-                            <TouchableOpacity onPress={() => router.back()}>
+                            <TouchableOpacity onPress={() => router.push("/home")}>
                                 <Text className="text-white text-lg relative -left-4">Back</Text>
                             </TouchableOpacity>
                             {isOwner && (
