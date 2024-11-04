@@ -77,7 +77,7 @@ const CreateReadyCheck = () => {
       });
 
       Alert.alert('Success', 'ReadyCheck sent');
-      // router.push('/home');
+      router.push(`/readycheck/${newReadyCheck.id}`);
     } catch (error) {
       Alert.alert('Error', error.message);
     } finally {

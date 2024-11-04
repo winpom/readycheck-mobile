@@ -89,6 +89,18 @@ const LiveReadyCheck = () => {
         ]);
     };
 
+    // Check if data has loaded before rendering the UI
+    if (!readycheck) {
+        return (
+            <SafeAreaView className="bg-primary h-full pt-5">
+                <TouchableOpacity onPress={() => router.push("/home")}>
+                    <Text className="text-white text-lg relative left-4">Home</Text>
+                </TouchableOpacity>
+                <Text className="text-white text-center mt-10">Loading...</Text>
+            </SafeAreaView>
+        );
+    }
+
     // Group invitees by RSVP status with full user objects
     const pendingUsers = readycheck?.invitees.filter(invitee =>
         !readycheck.rsvps.some(rsvp => rsvp.userId === invitee.$id)
@@ -143,7 +155,7 @@ const LiveReadyCheck = () => {
                         <Text className="text-gray-100 text-lg mb-2 text-center">{timeLeft}</Text>
                         <View className="flex-row">
                             <Text className="text-gray-400 text-lg mt-2">Owner:</Text>
-                            <MiniUserCard key={user.$id} user={user} />
+                            <MiniUserCard key={readycheck.owner.$id} user={readycheck.owner} />
                         </View>
                         <View className="flex-row">
                             <Text className="text-gray-400 text-lg mt-2">When:</Text>

@@ -17,8 +17,12 @@ const NotificationList = () => {
         const fetchNotifications = async () => {
             try {
                 const latestNotifications = await getNotifications(user.$id);
-                setNotifications(latestNotifications);
-                console.log(latestNotifications)
+                const sortedNotifications = latestNotifications.sort((a, b) => {
+                    return new Date(b.timestamp) - new Date(a.timestamp);
+                });
+
+                setNotifications(sortedNotifications);
+                console.log(sortedNotifications);
             } catch (error) {
                 setError(error.message);
             } finally {
@@ -29,12 +33,14 @@ const NotificationList = () => {
         fetchNotifications();
     }, [user]);
 
+
     const handlePress = async (notification) => {
         try {
             await markNotificationAsRead(notification.id);
-            if (notification.type === "ReadyCheck") {
-                router.push(`/readycheck/${notification.readycheckId}`);
-            } else if (notification.type === "FriendInvite") {
+            if (notification.type === "readyCheckInvite") {
+                console.log(notification.readyCheckId)
+                router.push(`/readycheck/${notification.readyCheckId.$id}`);
+            } else if (notification.type === "friendInvite") {
                 router.push(`/user/${notification.senderId.$id}`);
             }
 
@@ -65,7 +71,7 @@ const NotificationList = () => {
     return (
         <FlatList
             data={notifications}
-            keyExtractor={(item) => item.$id}
+            keyExtractor={(item, index) => item.$id || item.id || index.toString()} // Fallback to index if neither $id nor id is available
             renderItem={({ item }) => (
                 <NotificationCard
                     notification={item}
@@ -76,6 +82,7 @@ const NotificationList = () => {
             contentContainerStyle={{ padding: 5, backgroundColor: "#1F2937" }}
             ItemSeparatorComponent={() => <View className="h-4" />}
         />
+
     );
 };
 
