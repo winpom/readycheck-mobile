@@ -2,7 +2,7 @@ import { View, Image, Text, FlatList, TouchableOpacity, Alert } from 'react-nati
 import React, { useEffect, useState } from 'react';
 import { useLocalSearchParams, router } from "expo-router";
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { getOwnedReadyChecks, getUserById, addFriend, removeFriend, isFriend } from '../../../lib/appwrite';
+import { getOwnedReadyChecks, getUserById, requestFriend, removeFriend, isFriend } from '../../../lib/appwrite';
 import useAppwrite from '../../../lib/useAppwrite';
 import { useGlobalContext } from '../../../context/GlobalProvider';
 import ReadyCheckCard from '../../../components/ReadyCheckCard';
@@ -24,9 +24,9 @@ const OtherProfile = () => {
     isFriend(currentUser.$id, userId).then(setIsFriendStatus);
   }, [userId, currentUser]);
 
-  const handleAddFriend = async () => {
+  const handleRequestFriend = async () => {
     try {
-      await addFriend(currentUser.$id, userId);
+      await requestFriend(currentUser.$id, userId);
       setIsFriendStatus(true);
       Alert.alert("Friend added!");
     } catch (error) {
@@ -87,7 +87,7 @@ const OtherProfile = () => {
               />
             </View>
             {!isFriendStatus ? (
-              <TouchableOpacity onPress={handleAddFriend} className="mt-4 p-2 bg-blue-500 rounded">
+              <TouchableOpacity onPress={handleRequestFriend} className="mt-4 p-2 bg-blue-500 rounded">
                 <Text className="text-center text-white">Add Friend</Text>
               </TouchableOpacity>
             ) : (
