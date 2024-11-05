@@ -37,8 +37,8 @@ const NotificationList = () => {
         try {
             await markNotificationAsRead(notification.id);
             if (notification.type === "readyCheckInvite") {
-                console.log(notification.readyCheckId)
-                router.push(`/readycheck/${notification.readyCheckId.$id}`);
+                console.log(notification.readycheckId)
+                router.push(`/readycheck/${notification.readycheckId.$id}`);
             } else if (notification.type === "friendInvite") {
                 router.push(`/user/${notification.senderId.$id}`);
             }

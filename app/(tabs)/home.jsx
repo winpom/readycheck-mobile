@@ -137,10 +137,10 @@ const Home = () => {
 
     // Set up response listener for notification interactions
     responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
-      const { screen, readyCheckId, userId } = response.notification.request.content.data;
+      const { screen, readycheckId, userId } = response.notification.request.content.data;
 
-      if (screen === 'ReadyCheck' && readyCheckId) {
-        router.push(`/readycheck/${readyCheckId}`);
+      if (screen === 'ReadyCheck' && readycheckId) {
+        router.push(`/readycheck/${readycheckId}`);
       } else if (screen === 'UserProfile' && userId) {
         router.push(`/user/${userId}`);
       }
