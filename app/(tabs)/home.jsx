@@ -68,7 +68,6 @@ const Home = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [isNotificationVisible, setIsNotificationVisible] = useState(false);
   const [activeReadyChecks, setActiveReadyChecks] = useState([]);
-
   const [expoPushToken, setExpoPushToken] = useState('');
   const [notification, setNotification] = useState();
   const notificationListener = useRef();
@@ -123,8 +122,6 @@ const Home = () => {
     }
   };
 
-  if (!user) return null; // Prevent rendering if user is null
-
   useEffect(() => {
     // Register push notifications and save the token if user is available
     if (user) {
@@ -159,10 +156,11 @@ const Home = () => {
     };
   }, [user]);
 
+  // Render the main content
   return (
     <SafeAreaView className="bg-primary h-[100vh] relative">
       <StatusBar backgroundColor="#161622" style="light" />
-  
+
       {/* Dark Overlay - Only shown when NotificationList is visible */}
       {isNotificationVisible && (
         <TouchableOpacity
@@ -170,7 +168,7 @@ const Home = () => {
           className="absolute inset-0 h-full w-full bg-black opacity-50 z-20"
         />
       )}
-  
+
       {/* Notification List Container */}
       {isNotificationVisible && (
         <View
@@ -179,7 +177,7 @@ const Home = () => {
           <NotificationList />
         </View>
       )}
-  
+
       {/* Main Content */}
       <FlatList
         data={activeReadyChecks}
@@ -209,7 +207,7 @@ const Home = () => {
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
       />
     </SafeAreaView>
-  );  
+  );
 };
 
 export default Home;
