@@ -1,24 +1,30 @@
-import { View, Image, Text, FlatList, TouchableOpacity } from "react-native"
-import React from "react"
-import { Link } from "expo-router"
-import { SafeAreaView } from "react-native-safe-area-context"
+import { View, Image, Text, TouchableOpacity } from "react-native";
+import React from "react";
+import { Link } from "expo-router";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
-import { router } from "expo-router"
+import { router } from "expo-router";
 
-import { signOut } from "../../lib/appwrite"
-import { icons } from "../../constants"
+import { signOut } from "../../lib/appwrite";
+import { icons } from "../../constants";
 import { useGlobalContext } from "../../context/GlobalProvider";
 
 const Settings = () => {
-  const { setUser, setIsLoggedIn } = useGlobalContext();
+  const { user, setUser, setIsLoggedIn } = useGlobalContext();
 
   const logout = async () => {
-    await signOut();
-    setUser(null);
-    setIsLoggedIn(false)
+    if (!user) return;
 
-    router.replace("/sign-in")
-  }
+    try {
+      await signOut(user.$id);
+      setUser(null);
+      setIsLoggedIn(false);
+      router.replace("/sign-in");
+    } catch (error) {
+      console.error("Error logging out:", error);
+      Alert.alert("Sign Out Error", "An error occurred while signing out. Please try again.");
+    }
+  };
 
   return (
     <SafeAreaView className="bg-primary h-[100vh] pt-10">
@@ -53,4 +59,4 @@ const Settings = () => {
   );
 };
 
-export default Settings
+export default Settings;
