@@ -14,7 +14,8 @@
     },
     "ios": {
       "supportsTablet": true,
-      "package": "com.wp.readycheck"
+      "package": "com.wp.readycheck",
+      "bundleIdentifier": "com.wp.readycheck"
     },
     "android": {
       "adaptiveIcon": {
@@ -28,6 +29,11 @@
     },
     "plugins": [
       "expo-router"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "b22d9820-ef3c-4587-a855-fff1fbd3a47b"
+      }
+    }
   }
 }
