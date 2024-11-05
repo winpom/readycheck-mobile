@@ -172,7 +172,7 @@ const Home = () => {
       {/* Notification List Container */}
       {isNotificationVisible && (
         <View
-          className="absolute top-28 right-6 bg-gray-800 rounded-lg shadow-lg w-72 p-4 border border-secondary shadow-2xl z-50">
+          className="absolute top-28 right-6 bg-gray-800 rounded-lg shadow-lg w-72 p-4 border border-secondary shadow-2xl z-50 max-h-[300px]">
           <Text className="text-lg font-pmedium text-white mb-4">Notifications</Text>
           <NotificationList />
         </View>

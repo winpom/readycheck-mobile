@@ -22,7 +22,6 @@ const NotificationList = () => {
                 });
 
                 setNotifications(sortedNotifications);
-                console.log(sortedNotifications);
             } catch (error) {
                 setError(error.message);
             } finally {
