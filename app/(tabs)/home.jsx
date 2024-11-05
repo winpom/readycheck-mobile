@@ -50,9 +50,6 @@ async function registerForPushNotificationsAsync(userId) {
 
     try {
       const pushTokenString = (await Notifications.getExpoPushTokenAsync({ projectId })).data;
-      // console.log("Expo Push Token:", pushTokenString);
-
-      // Call updateExpoPushToken to save the token in Appwrite
       await updateExpoPushToken(userId, pushTokenString);
       return pushTokenString;
 
@@ -129,19 +126,27 @@ const Home = () => {
   if (!user) return null; // Prevent rendering if user is null
 
   useEffect(() => {
-    // Call registerForPushNotificationsAsync and save the token if user is available
+    // Register push notifications and save the token if user is available
     if (user) {
       registerForPushNotificationsAsync(user.$id)
         .then(token => setExpoPushToken(token ?? ''))
         .catch(error => console.error("Error registering for notifications:", error));
     }
 
+    // Set up listener for received notifications
     notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
       setNotification(notification);
     });
 
+    // Set up response listener for notification interactions
     responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
-      // console.log(response);
+      const { screen, readyCheckId, userId } = response.notification.request.content.data;
+
+      if (screen === 'ReadyCheck' && readyCheckId) {
+        router.push(`/readycheck/${readyCheckId}`);
+      } else if (screen === 'UserProfile' && userId) {
+        router.push(`/user/${userId}`);
+      }
     });
 
     return () => {

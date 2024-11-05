@@ -62,22 +62,24 @@ const CreateReadyCheck = () => {
     if (isLoading || !user) {
       return Alert.alert("Loading user data, please wait...");
     }
-
+  
     if (!form.title || !form.timing || !form.invitees.length) {
       return Alert.alert("Please fill out all required fields");
     }
-
+  
     setUploading(true);
-
+  
     try {
       // Assign `owner` to the current user's ID
-      await createReadyCheck({
+      const newReadyCheck = await createReadyCheck({
         ...form,
         owner: user.$id,
       });
-
-      Alert.alert('Success', 'ReadyCheck sent');
-      router.push(`/readycheck/${newReadyCheck.id}`);
+  
+      Alert.alert('Success', 'ReadyCheck created');
+  
+      // Navigate to the newly created ReadyCheck's page using newReadyCheck.$id
+      router.push(`/readycheck/${newReadyCheck.$id}`);
     } catch (error) {
       Alert.alert('Error', error.message);
     } finally {
@@ -85,6 +87,7 @@ const CreateReadyCheck = () => {
       setUploading(false);
     }
   };
+  
 
   const displayTiming = form.timing ? formatTiming(form.timing) : { date: '', time: '' };
 
