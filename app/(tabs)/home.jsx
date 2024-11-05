@@ -1,13 +1,68 @@
-import { View, Text, FlatList, Image, RefreshControl, TouchableOpacity, TouchableWithoutFeedback, Alert } from "react-native";
-import { useState, useEffect } from "react";
+import { View, Text, FlatList, Image, RefreshControl, TouchableOpacity, Platform, Alert } from "react-native";
+import { useState, useEffect, useRef } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { useRouter } from "expo-router";
+import * as Device from 'expo-device';
+import * as Notifications from 'expo-notifications';
+import Constants from 'expo-constants';
 
 import { RCEmptyState, ReadyCheckCard, NotificationList } from "../../components";
-import { getOwnedReadyChecks, getInvitedReadyChecks } from "../../lib/appwrite";
+import { getOwnedReadyChecks, getInvitedReadyChecks, updateExpoPushToken } from "../../lib/appwrite"; // Import updateExpoPushToken here
 import { icons } from "../../constants";
 import { useGlobalContext } from "../../context/GlobalProvider";
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: false,
+    shouldSetBadge: false,
+  }),
+});
+
+async function registerForPushNotificationsAsync(userId) {
+  if (Platform.OS === 'android') {
+    Notifications.setNotificationChannelAsync('default', {
+      name: 'default',
+      importance: Notifications.AndroidImportance.MAX,
+      vibrationPattern: [0, 250, 250, 250],
+      lightColor: '#FF231F7C',
+    });
+  }
+
+  if (Device.isDevice) {
+    const { status: existingStatus } = await Notifications.getPermissionsAsync();
+    let finalStatus = existingStatus;
+    if (existingStatus !== 'granted') {
+      const { status } = await Notifications.requestPermissionsAsync();
+      finalStatus = status;
+    }
+    if (finalStatus !== 'granted') {
+      console.warn('Permission not granted to get push token for push notification!');
+      return;
+    }
+    
+    const projectId = Constants?.expoConfig?.extra?.eas?.projectId ?? Constants?.easConfig?.projectId;
+    if (!projectId) {
+      console.warn('Project ID not found');
+      return;
+    }
+
+    try {
+      const pushTokenString = (await Notifications.getExpoPushTokenAsync({ projectId })).data;
+      // console.log("Expo Push Token:", pushTokenString);
+
+      // Call updateExpoPushToken to save the token in Appwrite
+      await updateExpoPushToken(userId, pushTokenString);
+      return pushTokenString;
+
+    } catch (error) {
+      console.error("Failed to get push token:", error);
+    }
+  } else {
+    console.warn("Must use a physical device for push notifications");
+  }
+}
 
 const Home = () => {
   const { user } = useGlobalContext();
@@ -16,6 +71,11 @@ const Home = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [isNotificationVisible, setIsNotificationVisible] = useState(false);
   const [activeReadyChecks, setActiveReadyChecks] = useState([]);
+
+  const [expoPushToken, setExpoPushToken] = useState('');
+  const [notification, setNotification] = useState();
+  const notificationListener = useRef();
+  const responseListener = useRef();
 
   // Redirect to sign-in if user is not logged in
   useEffect(() => {
@@ -67,6 +127,32 @@ const Home = () => {
   };
 
   if (!user) return null; // Prevent rendering if user is null
+
+  useEffect(() => {
+    // Call registerForPushNotificationsAsync and save the token if user is available
+    if (user) {
+      registerForPushNotificationsAsync(user.$id)
+        .then(token => setExpoPushToken(token ?? ''))
+        .catch(error => console.error("Error registering for notifications:", error));
+    }
+
+    notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
+      setNotification(notification);
+    });
+
+    responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
+      // console.log(response);
+    });
+
+    return () => {
+      if (notificationListener.current) {
+        Notifications.removeNotificationSubscription(notificationListener.current);
+      }
+      if (responseListener.current) {
+        Notifications.removeNotificationSubscription(responseListener.current);
+      }
+    };
+  }, [user]);
 
   return (
     <SafeAreaView className="bg-primary h-[100vh] relative">
