@@ -12,6 +12,7 @@ import { getOwnedReadyChecks, getInvitedReadyChecks, updateExpoPushToken, hasUnr
 import { icons } from "../../constants";
 import { useGlobalContext } from "../../context/GlobalProvider";
 
+// Set up notifications handling
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
@@ -20,6 +21,7 @@ Notifications.setNotificationHandler({
   }),
 });
 
+// Register for push notifications
 async function registerForPushNotificationsAsync(userId) {
   if (Platform.OS === 'android') {
     Notifications.setNotificationChannelAsync('default', {
@@ -82,17 +84,19 @@ const Home = () => {
   }, [user]);
 
   // Check for unread notifications
+  const checkUnreadNotifications = async () => {
+    if (user) {
+      const unread = await hasUnreadNotifications(user.$id);
+      setHasUnread(unread);
+    }
+  };
+
+  // Initial check for unread notifications
   useEffect(() => {
-    const checkUnreadNotifications = async () => {
-      if (user) {
-        const unread = await hasUnreadNotifications(user.$id);
-        setHasUnread(unread);
-      }
-    };
     checkUnreadNotifications();
   }, [user]);
 
-  // Fetches readychecks if user exists
+  // Fetch ready checks
   const fetchReadyChecks = async () => {
     if (!user) return;
 
@@ -113,27 +117,29 @@ const Home = () => {
     }
   };
 
-  // Fetches ready checks on component mount and when `user.$id` changes
-  useEffect(() => {
-    fetchReadyChecks();
-  }, [user?.id]);
-
+  // Refresh handler
   const onRefresh = async () => {
     setRefreshing(true);
     await fetchReadyChecks();
     setRefreshing(false);
   };
 
+  // Toggle notification list and re-check for unread notifications if list is closed
   const toggleNotificationList = () => {
     setIsNotificationVisible((prev) => !prev);
+    if (isNotificationVisible) {
+      checkUnreadNotifications();
+    }
   };
 
   const closeNotificationList = () => {
     if (isNotificationVisible) {
       setIsNotificationVisible(false);
+      checkUnreadNotifications();
     }
   };
 
+  // Notification listeners
   useEffect(() => {
     // Register push notifications and save the token if user is available
     if (user) {
@@ -145,6 +151,7 @@ const Home = () => {
     // Set up listener for received notifications
     notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
       setNotification(notification);
+      checkUnreadNotifications(); // Check unread count when a notification is received
     });
 
     // Set up response listener for notification interactions
@@ -176,7 +183,7 @@ const Home = () => {
       {/* Dark Overlay - Only shown when NotificationList is visible */}
       {isNotificationVisible && (
         <TouchableOpacity
-          onPress={() => setIsNotificationVisible(false)}
+          onPress={closeNotificationList}
           className="absolute inset-0 h-full w-full bg-black opacity-50 z-20"
         />
       )}

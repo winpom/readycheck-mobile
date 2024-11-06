@@ -11,7 +11,7 @@ const UserCard = ({ user }) => {
     const isCurrentUser = userId === currentUser?.$id;
     const href = isCurrentUser ? "/myProfile" : `user/${userId}`;
 
-    console.log(user)
+    console.log(user.displayName)
 
     return (
         <TouchableOpacity onPress={() => router.push(href)} className="mb-4 p-4 bg-gray-800 rounded-lg flex-row items-center">
