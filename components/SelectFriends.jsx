@@ -16,6 +16,7 @@ const SelectFriends = ({ selectedUsers, setSelectedUsers, visible, setVisible })
         const response = await getFriends(user.$id);
         setFriends(response.map(friend => ({
           id: friend.id,
+          diplayName: friend.displayName,
           username: friend.username,
           avatarUrl: friend.avatar,
         })));
@@ -75,10 +76,10 @@ const SelectFriends = ({ selectedUsers, setSelectedUsers, visible, setVisible })
                   />
                 ) : (
                   <View className="w-8 h-8 rounded-full bg-gray-300 mr-3 flex items-center justify-center">
-                    <Text className="text-gray-700">{friend.username[0]}</Text>
+                    <Text className="text-gray-700">{friend.displayName[0] || friend.username[0]}</Text>
                   </View>
                 )}
-                <Text className="text-gray-800">{friend.username}</Text>
+                <Text className="text-gray-800">{friend.displayName || friend.username}</Text>
               </TouchableOpacity>
             ))}
           </ScrollView>

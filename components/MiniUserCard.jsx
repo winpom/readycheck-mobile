@@ -17,7 +17,7 @@ const MiniUserCard = ({ user }) => {
     >
       <View>
         <Text className="text-white font-semibold text-center text-sm">
-          {user.username || "Not Found"}
+          {user.displayName || user.username || "Not Found"}
         </Text>
       </View>
     </TouchableOpacity>

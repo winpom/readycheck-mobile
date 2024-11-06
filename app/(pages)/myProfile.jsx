@@ -80,6 +80,47 @@ const OwnedProfile = () => {
         renderItem={({ item }) => <ReadyCheckCard readycheck={item} />}
         ListHeaderComponent={() => (
           <View className="w-full justify-center items-center mt-6 mb-5 px-4">
+            <View className="w-16 h-16 border border-secondary rounded-lg justify-center items-center">
+              <Image
+                source={{ uri: user?.avatar }}
+                className="w-[90%] h-[90%] rounded-lg"
+                resizeMode="cover"
+              />
+            </View>
+            <InfoBox
+              title={user?.username}
+              containerStyles="mt-5"
+              titleStyles="text-lg"
+            />
+            <View className="mt-5 flex-row items-center">
+              <InfoBox
+                title={activeReadychecks?.length || 0}
+                subtitle="ReadyChecks"
+                containerStyles="mr-10"
+                titleStyles="text-xl"
+              />
+              <InfoBox
+                title={friends?.length || 0}
+                subtitle="Friends"
+                titleStyles="text-xl"
+              />
+            </View>
+          </View>
+        )}
+        ListEmptyComponent={() => (
+          <RCEmptyState
+            title="No Active ReadyChecks"
+            subtitle="Create one to get started!"
+          />
+        )}
+      />
+    </SafeAreaView>
+  );
+};
+
+export default OwnedProfile;
+
+
 
 
             {/* <View className="mt-7 space-y-2">
@@ -114,44 +155,3 @@ const OwnedProfile = () => {
                 containerStyles="mt-7"
                 isLoading={uploading} />
             </View> */}
-
-            <View className="w-16 h-16 border border-secondary rounded-lg justify-center items-center">
-              <Image
-                source={{ uri: user?.avatar }}
-                className="w-[90%] h-[90%] rounded-lg"
-                resizeMode="cover"
-              />
-            </View>
-            <InfoBox
-              title={user?.username}
-              containerStyles="mt-5"
-              titleStyles="text-lg"
-            />
-            <View className="mt-5 flex-row items-center">
-              <InfoBox
-                title={activeReadychecks?.length || 0}
-                subtitle="ReadyChecks"
-                containerStyles="mr-10"
-                titleStyles="text-xl"
-              />
-              <InfoBox
-                title={friends?.length || 0}
-                subtitle="Friends"
-                titleStyles="text-xl"
-              />
-            </View>
-            {/* <Upcoming readychecks={activeReadychecks ?? []} /> */}
-          </View>
-        )}
-        ListEmptyComponent={() => (
-          <RCEmptyState
-            title="No Active ReadyChecks"
-            subtitle="Create one to get started!"
-          />
-        )}
-      />
-    </SafeAreaView>
-  );
-};
-
-export default OwnedProfile;

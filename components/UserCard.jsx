@@ -23,7 +23,7 @@ const UserCard = ({ user }) => {
                 resizeMode="cover"
             />
             <View className="ml-4">
-                <Text className="text-white font-semibold text-base">{user.username || "Unnamed"}</Text>
+                <Text className="text-white font-semibold text-base">{user.displayName || user.username || "Unnamed"}</Text>
                 <Text className="text-gray-400 text-sm">{isCurrentUser ? "View My Profile" : "View Profile"}</Text>
             </View>
         </TouchableOpacity>
