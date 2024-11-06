@@ -13,7 +13,7 @@ const ReadyCheckCard = ({ readycheck }) => {
     } = readycheck || {};
 
     const router = useRouter();
-    const username = owner.username || "Anonymous";
+    const name = owner.displayName ||owner.username || "Anonymous";
     const avatar = owner.avatar || icons.defaultAvatar;
     const { time, date } = formatTiming(timing);
 
@@ -34,7 +34,7 @@ const ReadyCheckCard = ({ readycheck }) => {
                                 {title}
                             </Text>
                             <Text className="text-xs text-gray-100 font-pregular" numberOfLines={1}>
-                                {username}
+                                {name}
                             </Text>
                         </View>
                     </View>

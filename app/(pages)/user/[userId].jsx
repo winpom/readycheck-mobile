@@ -69,7 +69,7 @@ const OtherProfile = () => {
               />
             </View>
             <InfoBox
-              title={profileUser?.username}
+              title={profileUser?.displayName || profileUser?.username}
               containerStyles="mt-5"
               titleStyles="text-lg"
             />
