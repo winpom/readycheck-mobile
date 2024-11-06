@@ -8,7 +8,7 @@ import * as Notifications from 'expo-notifications';
 import Constants from 'expo-constants';
 
 import { RCEmptyState, ReadyCheckCard, NotificationList } from "../../components";
-import { getOwnedReadyChecks, getInvitedReadyChecks, updateExpoPushToken } from "../../lib/appwrite"; // Import updateExpoPushToken here
+import { getOwnedReadyChecks, getInvitedReadyChecks, updateExpoPushToken, hasUnreadNotifications } from "../../lib/appwrite"; // Import updateExpoPushToken here
 import { icons } from "../../constants";
 import { useGlobalContext } from "../../context/GlobalProvider";
 
@@ -41,7 +41,7 @@ async function registerForPushNotificationsAsync(userId) {
       console.warn('Permission not granted to get push token for push notification!');
       return;
     }
-    
+
     const projectId = Constants?.expoConfig?.extra?.eas?.projectId ?? Constants?.easConfig?.projectId;
     if (!projectId) {
       console.warn('Project ID not found');
@@ -70,6 +70,7 @@ const Home = () => {
   const [activeReadyChecks, setActiveReadyChecks] = useState([]);
   const [expoPushToken, setExpoPushToken] = useState('');
   const [notification, setNotification] = useState();
+  const [hasUnread, setHasUnread] = useState(false);
   const notificationListener = useRef();
   const responseListener = useRef();
 
@@ -80,7 +81,18 @@ const Home = () => {
     }
   }, [user]);
 
-  // Fetches ready checks if user exists
+  // Check for unread notifications
+  useEffect(() => {
+    const checkUnreadNotifications = async () => {
+      if (user) {
+        const unread = await hasUnreadNotifications(user.$id);
+        setHasUnread(unread);
+      }
+    };
+    checkUnreadNotifications();
+  }, [user]);
+
+  // Fetches readychecks if user exists
   const fetchReadyChecks = async () => {
     if (!user) return;
 
@@ -192,7 +204,11 @@ const Home = () => {
               </View>
               <View className="mt-1.5">
                 <TouchableOpacity onPress={toggleNotificationList}>
-                  <Image source={icons.notifications} className="w-7 h-7" resizeMode="contain" tintColor="#CDCDE0" />
+                  <Image
+                    source={hasUnread ? icons.notifications_unread : icons.notifications}
+                    className="w-7 h-7"
+                    resizeMode="contain"
+                  />
                 </TouchableOpacity>
               </View>
             </View>

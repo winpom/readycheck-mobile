@@ -14,6 +14,7 @@ import play from "../assets/icons/play.png";
 import social from "../assets/icons/social.png";
 import settings from "../assets/icons/settings.png";
 import notifications from "../assets/icons/notifications.png";
+import notifications_unread from "../assets/icons/notifications_unread.png";
 import check from "../assets/icons/check.png";
 
 export default {
@@ -33,5 +34,6 @@ export default {
   social,
   settings,
   notifications,
+  notifications_unread,
   check,
 };
