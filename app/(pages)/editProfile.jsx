@@ -11,7 +11,7 @@ import { FormField, CustomButton } from "../../components";
 const EditProfile = () => {
   const { user, setUser } = useGlobalContext();
   const [displayName, setDisplayName] = useState('');
-  const [password, setPassword] = useState('');
+  // const [password, setPassword] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const avatar = user.avatar || icons.defaultAvatar;
@@ -82,14 +82,14 @@ const EditProfile = () => {
       />
 
       {/* Password Input */}
-      <FormField
+      {/* <FormField
         title="Password"
         value={password}
         placeholder="Enter new password"
         secureTextEntry
         handleChangeText={(e) => setPassword(e)}
         otherStyles="mt-2"
-      />
+      /> */}
 
       {/* Save Button */}
       <CustomButton
