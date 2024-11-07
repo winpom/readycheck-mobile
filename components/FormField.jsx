@@ -3,7 +3,7 @@ import React, { useState } from "react";
 
 import { icons } from "../constants";
 
-const FormField = ({ title, value, placeholder, handleChangeText, placeholderTextColor = "#CDCDE0", otherStyles, ...props }) => {
+const FormField = ({ title, subtitle, value, placeholder, handleChangeText, placeholderTextColor = "#CDCDE0", otherStyles, ...props }) => {
     const [showPassword, setShowPassword] = useState(false);
     const [isFocused, setIsFocused] = useState(false);
 
@@ -13,8 +13,13 @@ const FormField = ({ title, value, placeholder, handleChangeText, placeholderTex
         : "flex-1 text-gray-400 font-plight italic"; // Lighter font and italic for placeholder effect
 
     return (
-        <View className={`space-y-2 ${otherStyles}`}>
-            <Text className="text-base text-gray-100 font-pmedium">{title}</Text>
+        <View className={`my-2 ${otherStyles}`}>
+            <Text className="mb-1 text-base text-gray-100 font-pmedium">{title}</Text>
+            
+            {/* Only render subtitle if it is provided */}
+            {subtitle && (
+                <Text className="mb-1 text-xs text-gray-400 font-plight">{subtitle}</Text>
+            )}
 
             <View className="border-2 border-black-200 w-full h-16 px-4 bg-black-100 rounded-2xl focus:border-secondary items-center flex-row">
                 <TextInput

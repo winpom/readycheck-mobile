@@ -9,9 +9,7 @@ const MiniUserCard = ({ user }) => {
   const userId = user?.$id || user?.id;
   const isCurrentUser = userId === currentUser?.$id;
   const href = isCurrentUser ? "/myProfile" : `user/${userId}`;
-
-  console.log("mini", user.displayName)
-
+  
   return (
     <TouchableOpacity
       onPress={() => router.push(href)}

@@ -1,79 +1,37 @@
 import { View, Image, Text, FlatList, TouchableOpacity } from 'react-native';
-import React, { useState } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useFocusEffect } from '@react-navigation/native';
 import { router } from 'expo-router';
-import * as ImagePicker from 'expo-image-picker';
 
-import { getOwnedReadyChecks, getInvitedReadyChecks, uploadProfileImage, getFriends } from '../../lib/appwrite';
+import { getOwnedReadyChecks, getFriends } from '../../lib/appwrite';
 import useAppwrite from '../../lib/useAppwrite';
 import { useGlobalContext } from '../../context/GlobalProvider';
-import {ReadyCheckCard, InfoBox, RCEmptyState, FormField} from '../../components'
-
+import { ReadyCheckCard, InfoBox, RCEmptyState } from '../../components';
 import { icons } from '../../constants';
 
 const OwnedProfile = () => {
-  const { user, setUser, setIsLoggedIn } = useGlobalContext();
+  const { user } = useGlobalContext();
   const { data: activeReadychecks } = useAppwrite(() => getOwnedReadyChecks(user.$id));
   const { data: friends } = useAppwrite(() => getFriends(user.$id));
 
-  const [uploading, setUploading] = useState(false);
-  const [editing, setEditing] = useState(false); 
-
-  const [form, setForm] = useState({
-    name: '',
-    profileImage: user?.avatar,
-  });
-
-  const openPicker = async (selectType) => {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      aspect: [4, 3],
-      quality: 0.5,
-    });
-
-    if (!result.canceled) {
-      if (selectType === 'image') {
-        setForm({ ...form, profileImage: result.assets[0] })
-      }
-    }
-  };
-
-  const upload = async () => {
-    setUploading(true)
-
-    try {
-      await uploadProfileImage({
-        ...form, userId: user.$id
-      })
-
-      Alert.alert('Success', 'Image Uploaded')
-      router.push('/profile')
-    } catch (error) {
-      Alert.alert('Error', error.message)
-    } finally {
-      setForm({
-        name: "",
-        profileImage: "",
-      })
-
-      setUploading(false)
-    }
-  }
+  useFocusEffect(
+    useCallback(() => {
+    }, [user.avatar, user.displayName])
+  );
 
   return (
     <SafeAreaView className="bg-primary h-full">
       {/* Header with Back and Edit Buttons */}
       <View className="flex-row justify-between items-center px-4 py-4">
-        {/* Back Button */}
-        <TouchableOpacity onPress={() => router.back()}>
+        <TouchableOpacity onPress={() => router.replace("/settings")}>
           <Text className="text-white text-lg">Back</Text>
         </TouchableOpacity>
-
-        {/* Edit Button */}
-        <TouchableOpacity onPress={() => setEditing(true)}>
+        <TouchableOpacity onPress={() => router.replace("/editProfile")}>
           <Text className="text-white text-lg">Edit</Text>
         </TouchableOpacity>
       </View>
+      
       <FlatList
         data={activeReadychecks}
         keyExtractor={(item) => item.$id}
@@ -88,7 +46,7 @@ const OwnedProfile = () => {
               />
             </View>
             <InfoBox
-              title={user?.username}
+              title={user?.displayName || user?.username}
               containerStyles="mt-5"
               titleStyles="text-lg"
             />
@@ -119,39 +77,3 @@ const OwnedProfile = () => {
 };
 
 export default OwnedProfile;
-
-
-
-
-            {/* <View className="mt-7 space-y-2">
-              <Text className="text-base text-gray-100 font-pmedium">
-                Upload Profile Photo
-              </Text>
-              <TouchableOpacity onPress={() => openPicker('image')}>
-                {form.profileImage ? (
-                  <Image
-                    source={{ uri: form.image.uri }}
-                    className="w-full h-64 rounded-2xl"
-                    resizeMode="cover"
-                  />
-                ) : (
-                  <View className="w-full h-40 px-4 bg-black-100 rounded-2xl justify-center items-center">
-                    <View className="w-14 h-14 border-2 border-dashed border-secondary-100 justify-center items-center">
-                      <Image
-                        source={{ uri: user?.avatar }}
-                        resizeMode="contain"
-                        className="w-1/2 h-1/2"
-                      />
-                      <Text className="text-sm text-gray-100 font-pmedium">
-                        Choose a file
-                      </Text>
-                    </View>
-                  </View>
-                )}
-              </TouchableOpacity>
-              <CustomButton
-                title="Upload"
-                handlePress={upload}
-                containerStyles="mt-7"
-                isLoading={uploading} />
-            </View> */}
