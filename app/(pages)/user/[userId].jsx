@@ -2,7 +2,7 @@ import { View, Image, Text, FlatList, TouchableOpacity, Alert } from 'react-nati
 import React, { useEffect, useState } from 'react';
 import { useLocalSearchParams, router } from "expo-router";
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { getOwnedReadyChecks, getUserById, requestFriend, removeFriend, isFriend } from '../../../lib/appwrite';
+import { getOwnedReadyChecks, getUserById, requestFriend, removeFriend, acceptFriendRequest, rejectFriendRequest } from '../../../lib/appwrite';
 import useAppwrite from '../../../lib/useAppwrite';
 import { useGlobalContext } from '../../../context/GlobalProvider';
 import ReadyCheckCard from '../../../components/ReadyCheckCard';
@@ -13,32 +13,70 @@ const OtherProfile = () => {
   const { userId } = useLocalSearchParams(); 
   const { user: currentUser } = useGlobalContext();
   const [profileUser, setProfileUser] = useState(null);
-  const [isFriendStatus, setIsFriendStatus] = useState(false);
+  const [relationshipStatus, setRelationshipStatus] = useState(null); 
   const { data: activeReadychecks } = useAppwrite(() => getOwnedReadyChecks(userId));
 
   useEffect(() => {
-    // Fetch the clicked user's profile
-    getUserById(userId).then(setProfileUser);
+    // Fetch the clicked user's profile and relationship status
+    const fetchProfileAndStatus = async () => {
+      const fetchedUser = await getUserById(userId);
+      setProfileUser(fetchedUser);
+      console.log("fetched", fetchedUser)
+      console.log("current", currentUser)
 
-    // Check if the clicked user is already a friend
-    isFriend(currentUser.$id, userId).then(setIsFriendStatus);
+      // Determine relationship status with profileUser
+      if (currentUser.friends?.includes(userId)) {
+        setRelationshipStatus("friends");
+      } else if (currentUser.friendRequests?.includes(userId)) {
+        setRelationshipStatus("requestReceived");
+      } else if (fetchedUser.friendRequests?.includes(currentUser.$id)) {
+        setRelationshipStatus("pending");
+      } else {
+        setRelationshipStatus("none");
+      }
+    };
+
+    fetchProfileAndStatus();
   }, [userId, currentUser]);
 
+  // Handlers for the different button actions
   const handleRequestFriend = async () => {
     try {
       await requestFriend(currentUser.$id, userId);
-      setIsFriendStatus(true);
-      Alert.alert("Friend added!");
+      setRelationshipStatus("pending");
+      Alert.alert("Friend request sent!");
     } catch (error) {
       console.error(error);
-      Alert.alert("Failed to add friend.");
+      Alert.alert("Failed to send friend request.");
+    }
+  };
+
+  const handleAcceptFriendRequest = async () => {
+    try {
+      await acceptFriendRequest(currentUser.$id, userId);
+      setRelationshipStatus("friends");
+      Alert.alert("Friend request accepted!");
+    } catch (error) {
+      console.error(error);
+      Alert.alert("Failed to accept friend request.");
+    }
+  };
+
+  const handleRejectFriendRequest = async () => {
+    try {
+      await rejectFriendRequest(currentUser.$id, userId);
+      setRelationshipStatus("none");
+      Alert.alert("Friend request rejected.");
+    } catch (error) {
+      console.error(error);
+      Alert.alert("Failed to reject friend request.");
     }
   };
 
   const handleRemoveFriend = async () => {
     try {
       await removeFriend(currentUser.$id, userId);
-      setIsFriendStatus(false);
+      setRelationshipStatus("none");
       Alert.alert("Friend removed.");
     } catch (error) {
       console.error(error);
@@ -86,11 +124,29 @@ const OtherProfile = () => {
                 titleStyles="text-xl"
               />
             </View>
-            {!isFriendStatus ? (
+
+            {/* Button display based on relationship status */}
+            {relationshipStatus === "none" && (
               <TouchableOpacity onPress={handleRequestFriend} className="mt-4 p-2 bg-blue-500 rounded">
                 <Text className="text-center text-white">Add Friend</Text>
               </TouchableOpacity>
-            ) : (
+            )}
+            {relationshipStatus === "pending" && (
+              <TouchableOpacity className="mt-4 p-2 bg-gray-500 rounded">
+                <Text className="text-center text-white">Pending</Text>
+              </TouchableOpacity>
+            )}
+            {relationshipStatus === "requestReceived" && (
+              <>
+                <TouchableOpacity onPress={handleAcceptFriendRequest} className="mt-4 p-2 bg-green-500 rounded">
+                  <Text className="text-center text-white">Accept Friend Request</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={handleRejectFriendRequest} className="mt-2 p-2 bg-red-500 rounded">
+                  <Text className="text-center text-white">Reject Friend Request</Text>
+                </TouchableOpacity>
+              </>
+            )}
+            {relationshipStatus === "friends" && (
               <TouchableOpacity onPress={handleRemoveFriend} className="mt-4 p-2 bg-red-500 rounded">
                 <Text className="text-center text-white">Remove Friend</Text>
               </TouchableOpacity>
