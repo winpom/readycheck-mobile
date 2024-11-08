@@ -21,8 +21,6 @@ const OtherProfile = () => {
     const fetchProfileAndStatus = async () => {
       const fetchedUser = await getUserById(userId);
       setProfileUser(fetchedUser);
-      console.log("fetched", fetchedUser)
-      console.log("current", currentUser)
 
       // Determine relationship status with profileUser
       if (currentUser.friends?.includes(userId)) {

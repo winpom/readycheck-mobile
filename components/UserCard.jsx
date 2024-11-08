@@ -21,6 +21,9 @@ const UserCard = ({ user }) => {
             <View className="ml-4">
                 <Text className="text-white font-semibold text-base">
                     {user.displayName || user.username || "Not Found"}
+                    {user.displayName && (
+                        <Text className="text-gray-100 text-xs italic"> ({user.username})</Text>
+                    )}
                 </Text>
                 <Text className="text-gray-400 text-sm">
                     {isCurrentUser ? "View My Profile" : "View Profile"}

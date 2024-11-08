@@ -8,7 +8,7 @@ import * as Notifications from 'expo-notifications';
 import Constants from 'expo-constants';
 
 import { RCEmptyState, ReadyCheckCard, NotificationList } from "../../components";
-import { getOwnedReadyChecks, getInvitedReadyChecks, updateExpoPushToken, hasUnreadNotifications } from "../../lib/appwrite"; // Import updateExpoPushToken here
+import { getOwnedReadyChecks, getInvitedReadyChecks, updateExpoPushToken, getUnreadNotificationCount } from "../../lib/appwrite"; // Import updateExpoPushToken here
 import { icons } from "../../constants";
 import { useGlobalContext } from "../../context/GlobalProvider";
 
@@ -72,7 +72,7 @@ const Home = () => {
   const [activeReadyChecks, setActiveReadyChecks] = useState([]);
   const [expoPushToken, setExpoPushToken] = useState('');
   const [notification, setNotification] = useState();
-  const [hasUnread, setHasUnread] = useState(false);
+  const [unreadNotifications, setUnreadNotifications] = useState(false);
   const notificationListener = useRef();
   const responseListener = useRef();
 
@@ -86,8 +86,8 @@ const Home = () => {
   // Check for unread notifications
   const checkUnreadNotifications = async () => {
     if (user) {
-      const unread = await hasUnreadNotifications(user.$id);
-      setHasUnread(unread);
+      const unread = await getUnreadNotificationCount(user.$id);
+      setUnreadNotifications(unread);
     }
   };
 
@@ -212,7 +212,7 @@ const Home = () => {
               <View className="mt-1.5">
                 <TouchableOpacity onPress={toggleNotificationList}>
                   <Image
-                    source={hasUnread ? icons.notifications_unread : icons.notifications}
+                    source={unreadNotifications > 0 ? icons.notifications_unread : icons.notifications}
                     className="w-7 h-7"
                     resizeMode="contain"
                   />

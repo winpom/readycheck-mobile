@@ -17,7 +17,7 @@ const NotificationCard = ({ notification, onPress }) => {
         }`}
     >
       <View className="ml-4">
-        <Text numberOfLines={1} className={`text-small ${notification.readStatus === "read" ? "text-gray-400 font-pregular" : "text-white font-semibold"}`}>
+        <Text numberOfLines={2} className={`text-small ${notification.readStatus === "read" ? "text-gray-400 font-pregular" : "text-white font-semibold"}`}>
           {notification.message}
         </Text>
         <Text className={`text-small ${notification.readStatus === "read" ? "text-gray-600" : "text-gray-400"}`}>{time}, {date}</Text>
