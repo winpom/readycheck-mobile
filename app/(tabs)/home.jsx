@@ -210,11 +210,21 @@ const Home = () => {
                 <Text className="text-2xl font-psemibold text-white">{user.displayName || user?.username}</Text>
               </View>
               <View className="mt-1.5">
+                {unreadNotifications > 0 && (
+                  <View className="z-10 rounded-full absolute -right-0.5 bg-red-500 -top-0.5 min-w-[15px] h-[15px] items-center">
+                    <Text
+                      className="text-white text-xs text-center"
+                    >
+                      {unreadNotifications}
+                    </Text>
+                  </View>
+                )}
                 <TouchableOpacity onPress={toggleNotificationList}>
                   <Image
-                    source={unreadNotifications > 0 ? icons.notifications_unread : icons.notifications}
+                    source={icons.notifications}
                     className="w-7 h-7"
                     resizeMode="contain"
+                    tintColor= {unreadNotifications > 0 ? "#FFA001" : "#CDCDE0"}
                   />
                 </TouchableOpacity>
               </View>
