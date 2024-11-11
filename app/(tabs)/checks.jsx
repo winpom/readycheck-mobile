@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, FlatList, Alert } from "react-native";
+import { View, Text, ScrollView, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useGlobalContext } from "../../context/GlobalProvider";
 import { getOwnedReadyChecks, getInvitedReadyChecks } from "../../lib/appwrite";
@@ -53,39 +53,30 @@ const YourReadyChecks = () => {
 
   return (
     <SafeAreaView className="bg-primary h-[100vh] pt-5">
-      <View className="px-4">
+      <View className="px-3">
         <Text className="text-secondary text-3xl my-2 text-center">Your ReadyChecks</Text>
-
-        {/* Owned ReadyChecks Section */}
-        <Text className="text-white text-xl my-4">Owned ReadyChecks</Text>
-        <FlatList
-          data={ownedReadyChecks}
-          keyExtractor={(item) => item.$id}
-          renderItem={({ item }) => <ReadyCheckCard readycheck={item} />}
-          ListEmptyComponent={() => (
+        <ScrollView>
+          <Text className="text-white text-xl my-4">Owned ReadyChecks</Text>
+          {ownedReadyChecks.length > 0 ? (
+            ownedReadyChecks.map((item) => <ReadyCheckCard key={item.$id} readycheck={item} />)
+          ) : (
             <Text className="text-gray-400 text-center my-2">No owned ReadyChecks.</Text>
           )}
-        />
 
-        {/* Invited ReadyChecks Section */}
-        <Text className="text-white text-xl my-4">Invited ReadyChecks</Text>
-        <FlatList
-          data={invitedReadyChecks}
-          keyExtractor={(item) => item.$id}
-          renderItem={({ item }) => <ReadyCheckCard readycheck={item} />}
-          ListEmptyComponent={() => (
+          <Text className="text-white text-xl my-4">Invited ReadyChecks</Text>
+          {invitedReadyChecks.length > 0 ? (
+            invitedReadyChecks.map((item) => <ReadyCheckCard key={item.$id} readycheck={item} />)
+          ) : (
             <Text className="text-gray-400 text-center my-2">No invitations to ReadyChecks.</Text>
           )}
-        />
-        <Text className="text-white text-xl my-4">Archived ReadyChecks</Text>
-        <FlatList
-          data={archivedReadyChecks}
-          keyExtractor={(item) => item.$id}
-          renderItem={({ item }) => <ReadyCheckCard readycheck={item} />}
-          ListEmptyComponent={() => (
+
+          <Text className="text-white text-xl my-4">Archived ReadyChecks</Text>
+          {archivedReadyChecks.length > 0 ? (
+            archivedReadyChecks.map((item) => <ReadyCheckCard key={item.$id} readycheck={item} />)
+          ) : (
             <Text className="text-gray-400 text-center">No archived ReadyChecks.</Text>
           )}
-        />
+        </ScrollView>
       </View>
     </SafeAreaView>
   );
