@@ -116,7 +116,8 @@ const Home = () => {
       Alert.alert("Error", "Could not load ReadyChecks.");
     }
   };
-
+  fetchReadyChecks()
+  
   // Refresh handler
   const onRefresh = async () => {
     setRefreshing(true);
