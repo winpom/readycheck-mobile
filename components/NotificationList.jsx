@@ -3,8 +3,7 @@ import React, { useState, useEffect } from "react";
 import { useRouter } from "expo-router";
 import { getNotifications, markNotificationAsRead } from "../lib/appwrite";
 import NotificationCard from "./NotificationCard";
-
-import { useGlobalContext } from "../context/GlobalProvider"
+import { useGlobalContext } from "../context/GlobalProvider";
 
 const NotificationList = () => {
     const { user } = useGlobalContext();
@@ -13,25 +12,47 @@ const NotificationList = () => {
     const [error, setError] = useState(null);
     const router = useRouter();
 
+    const [loadedCount, setLoadedCount] = useState(7); // Limit initially loaded notifications
+    const [hasMore, setHasMore] = useState(true); // Track if more notifications are available
+    const [isLoadingMore, setIsLoadingMore] = useState(false); // Loading state for more items
+
     useEffect(() => {
-        const fetchNotifications = async () => {
-            try {
-                const latestNotifications = await getNotifications(user.$id);
-                const sortedNotifications = latestNotifications.sort((a, b) => {
-                    return new Date(b.timestamp) - new Date(a.timestamp);
-                });
-
-                setNotifications(sortedNotifications);
-            } catch (error) {
-                setError(error.message);
-            } finally {
-                setLoading(false);
-            }
-        };
-
         fetchNotifications();
     }, [user]);
 
+    const fetchNotifications = async (loadMore = false) => {
+        try {
+            setLoading(true);
+            const latestNotifications = await getNotifications(user.$id);
+            const sortedNotifications = latestNotifications.sort(
+                (a, b) => new Date(b.timestamp) - new Date(a.timestamp)
+            );
+
+            if (loadMore) {
+                setNotifications((prev) => [
+                    ...prev,
+                    ...sortedNotifications.slice(prev.length, prev.length + 7),
+                ]);
+            } else {
+                setNotifications(sortedNotifications.slice(0, loadedCount));
+            }
+
+            setHasMore(sortedNotifications.length > notifications.length + 7);
+        } catch (error) {
+            setError(error.message);
+        } finally {
+            setLoading(false);
+            setIsLoadingMore(false);
+        }
+    };
+
+    const loadMoreNotifications = () => {
+        if (hasMore && !isLoadingMore) {
+            setIsLoadingMore(true);
+            setLoadedCount((prevCount) => prevCount + 7);
+            fetchNotifications(true);
+        }
+    };
 
     const handlePress = async (notification) => {
         try {
@@ -50,9 +71,9 @@ const NotificationList = () => {
         }
     };
 
-    if (loading) {
+    if (loading && notifications.length === 0) {
         return (
-            <View className="flex-1 justify-left items-center bg-primary">
+            <View className="flex-1 justify-center items-center bg-primary">
                 <ActivityIndicator size="large" color="#4B5563" />
             </View>
         );
@@ -69,18 +90,22 @@ const NotificationList = () => {
     return (
         <FlatList
             data={notifications}
-            keyExtractor={(item, index) => item.$id || item.id || index.toString()} // Fallback to index if neither $id nor id is available
+            keyExtractor={(item, index) => item.$id || item.id || index.toString()}
             renderItem={({ item }) => (
                 <NotificationCard
                     notification={item}
                     onPress={() => handlePress(item)}
-                    isUnread={item.status === "unread"} // Pass read/unread status
+                    isUnread={item.status === "unread"}
                 />
             )}
             contentContainerStyle={{ padding: 5, backgroundColor: "#1F2937" }}
             ItemSeparatorComponent={() => <View className="h-4" />}
+            onEndReached={loadMoreNotifications} // Load more when the end is reached
+            onEndReachedThreshold={0.5}
+            ListFooterComponent={
+                hasMore && isLoadingMore ? <ActivityIndicator size="small" color="#4B5563" /> : null
+            }
         />
-
     );
 };
 
