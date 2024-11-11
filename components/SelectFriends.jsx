@@ -16,7 +16,7 @@ const SelectFriends = ({ selectedUsers, setSelectedUsers, visible, setVisible })
         const response = await getFriends(user.$id);
         setFriends(response.map(friend => ({
           id: friend.id,
-          diplayName: friend.displayName,
+          displayName: friend.displayName,
           username: friend.username,
           avatarUrl: friend.avatar,
         })));
@@ -46,6 +46,8 @@ const SelectFriends = ({ selectedUsers, setSelectedUsers, visible, setVisible })
     setSelectedUsers(tempSelectedUsers);
     setVisible(false);
   };
+
+  console.log(friends)
 
   return (
     <Modal
@@ -79,7 +81,11 @@ const SelectFriends = ({ selectedUsers, setSelectedUsers, visible, setVisible })
                     <Text className="text-gray-700">{friend.displayName[0] || friend.username[0]}</Text>
                   </View>
                 )}
-                <Text className="text-gray-800">{friend.displayName || friend.username}</Text>
+                <Text className="text-gray-800">{friend.displayName || friend.username}
+                  {friend.displayName && (
+                    <Text className="text-gray-400 text-xs italic"> ({friend.username})</Text>
+                  )}
+                </Text>
               </TouchableOpacity>
             ))}
           </ScrollView>

@@ -211,10 +211,8 @@ const Home = () => {
               </View>
               <View className="mt-1.5">
                 {unreadNotifications > 0 && (
-                  <View className="z-10 rounded-full absolute -right-0.5 bg-red-500 -top-0.5 min-w-[15px] h-[15px] items-center">
-                    <Text
-                      className="text-white text-xs text-center"
-                    >
+                  <View className="flex justify-center items-center z-10 rounded-full absolute -right-0.5 bg-red-600 -top-0.5 min-w-[15px] h-[15px]">
+                    <Text className="text-white text-xs">
                       {unreadNotifications}
                     </Text>
                   </View>
@@ -224,7 +222,7 @@ const Home = () => {
                     source={icons.notifications}
                     className="w-7 h-7"
                     resizeMode="contain"
-                    tintColor= {unreadNotifications > 0 ? "#FFA001" : "#CDCDE0"}
+                    tintColor={unreadNotifications > 0 ? "#FFA001" : "#CDCDE0"}
                   />
                 </TouchableOpacity>
               </View>

@@ -41,7 +41,7 @@ const EditProfile = () => {
       const updatedData = {
         displayName,
         avatar,
-        ...(password && { password }),
+        // ...(password && { password }),
       };
 
       const updatedUser = await updateUser(user.$id, updatedData);

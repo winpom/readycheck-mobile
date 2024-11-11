@@ -31,7 +31,7 @@ const OwnedProfile = () => {
           <Text className="text-white text-lg">Edit</Text>
         </TouchableOpacity>
       </View>
-      
+
       <FlatList
         data={activeReadychecks}
         keyExtractor={(item) => item.$id}
@@ -47,6 +47,7 @@ const OwnedProfile = () => {
             </View>
             <InfoBox
               title={user?.displayName || user?.username}
+              subtitle={user?.displayName ? user?.username : undefined}
               containerStyles="mt-5"
               titleStyles="text-lg"
             />
