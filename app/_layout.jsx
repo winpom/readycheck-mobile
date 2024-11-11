@@ -30,19 +30,19 @@ const RootLayout = () => {
 
   return (
     <GlobalProvider>
-      <RealTimeProvider>
-        <Stack>
-          <Stack.Screen name="index" options={{ headerShown: false }} />
-          <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="(pages)/myProfile" options={{ headerShown: false }} />
-          <Stack.Screen name="(pages)/user/[userId]" options={{ headerShown: false }} />
-          <Stack.Screen name="(pages)/readycheck/[readycheckId]" options={{ headerShown: false }} />
-          <Stack.Screen name="(pages)/edit/[readycheckId]" options={{ headerShown: false }} />
-          <Stack.Screen name="(pages)/editProfile" options={{ headerShown: false }} />
-          <Stack.Screen name="search/[query]" options={{ headerShown: false }} />
-        </Stack>
-      </RealTimeProvider>
+      {/* <RealTimeProvider> */}
+      <Stack>
+        <Stack.Screen name="index" options={{ headerShown: false }} />
+        <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="(pages)/myProfile" options={{ headerShown: false }} />
+        <Stack.Screen name="(pages)/user/[userId]" options={{ headerShown: false }} />
+        <Stack.Screen name="(pages)/readycheck/[readycheckId]" options={{ headerShown: false }} />
+        <Stack.Screen name="(pages)/edit/[readycheckId]" options={{ headerShown: false }} />
+        <Stack.Screen name="(pages)/editProfile" options={{ headerShown: false }} />
+        <Stack.Screen name="search/[query]" options={{ headerShown: false }} />
+      </Stack>
+      {/* </RealTimeProvider> */}
     </GlobalProvider>
   )
 }
