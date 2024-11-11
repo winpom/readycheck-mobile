@@ -17,6 +17,21 @@ const LiveReadyCheck = () => {
     const [activeRSVP, setActiveRSVP] = useState("Pending");
 
     useEffect(() => {
+        const unsubscribe = realTimeSubscribe((eventType, changedDocument) => {
+            if (eventType.includes('create')) {
+                setDocuments((prevDocuments) => [changedDocument, ...prevDocuments]);
+            }
+    
+            if (eventType.includes('delete')) {
+                setDocuments((prevDocuments) => prevDocuments.filter((document) => document.$id !== changedDocument.$id));
+            }
+        });
+    
+        // Clean up the subscription on component unmount
+        return () => unsubscribe();
+    }, []);
+
+    useEffect(() => {
         if (readycheckId) {
             getReadyCheck(readycheckId)
                 .then(data => {
