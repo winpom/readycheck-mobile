@@ -1,4 +1,4 @@
-import { View, Text, FlatList, Image, RefreshControl, TouchableOpacity, Platform, Alert } from "react-native";
+import { View, Text, FlatList, Image, RefreshControl, TouchableOpacity, Platform, Alert, ActivityIndicator } from "react-native";
 import { useState, useEffect, useRef } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
@@ -67,6 +67,7 @@ const Home = () => {
   const { user } = useGlobalContext();
   const router = useRouter();
 
+  const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [isNotificationVisible, setIsNotificationVisible] = useState(false);
   const [activeReadyChecks, setActiveReadyChecks] = useState([]);
@@ -114,9 +115,16 @@ const Home = () => {
     } catch (error) {
       console.error("Error fetching readychecks:", error);
       Alert.alert("Error", "Could not load ReadyChecks.");
+    } finally {
+      setLoading(false);
     }
   };
-  fetchReadyChecks()
+
+  useEffect(() => {
+    if (user) {
+      fetchReadyChecks();
+    }
+  }, [user]);
   
   // Refresh handler
   const onRefresh = async () => {
@@ -181,7 +189,6 @@ const Home = () => {
     <SafeAreaView className="bg-primary h-[100vh] relative">
       <StatusBar backgroundColor="#161622" style="light" />
 
-      {/* Dark Overlay - Only shown when NotificationList is visible */}
       {isNotificationVisible && (
         <TouchableOpacity
           onPress={closeNotificationList}
@@ -189,7 +196,6 @@ const Home = () => {
         />
       )}
 
-      {/* Notification List Container */}
       {isNotificationVisible && (
         <View
           className="absolute top-28 right-6 bg-gray-800 rounded-lg shadow-lg w-72 p-4 border border-secondary shadow-2xl z-50 max-h-[300px]">
@@ -198,46 +204,49 @@ const Home = () => {
         </View>
       )}
 
-      {/* Main Content */}
-      <FlatList
-        data={activeReadyChecks}
-        keyExtractor={(item) => item.$id}
-        renderItem={({ item }) => <ReadyCheckCard readycheck={item} />}
-        ListHeaderComponent={() => (
-          <View className="mt-6 px-4 space-y-2">
-            <View className="justify-between items-start flex-row mb-6">
-              <View>
-                <Text className="font-pmedium text-sm text-gray-100">Welcome Back,</Text>
-                <Text className="text-2xl font-psemibold text-white">{user.displayName || user?.username}</Text>
+      {loading ? (
+        <ActivityIndicator size="large" color="#ffffff" style={{ marginTop: 30 }} />
+      ) : (
+        <FlatList
+          data={activeReadyChecks}
+          keyExtractor={(item) => item.$id}
+          renderItem={({ item }) => <ReadyCheckCard readycheck={item} />}
+          ListHeaderComponent={() => (
+            <View className="mt-6 px-4 space-y-2">
+              <View className="justify-between items-start flex-row mb-6">
+                <View>
+                  <Text className="font-pmedium text-sm text-gray-100">Welcome Back,</Text>
+                  <Text className="text-2xl font-psemibold text-white">{user.displayName || user?.username}</Text>
+                </View>
+                <View className="mt-1.5">
+                  {unreadNotifications > 0 && (
+                    <View className="flex justify-center items-center z-10 rounded-full absolute -right-0.5 bg-red-600 -top-0.5 min-w-[15px] h-[15px]">
+                      <Text className="text-white text-xs">
+                        {unreadNotifications}
+                      </Text>
+                    </View>
+                  )}
+                  <TouchableOpacity onPress={toggleNotificationList}>
+                    <Image
+                      source={icons.notifications}
+                      className="w-7 h-7"
+                      resizeMode="contain"
+                      tintColor={unreadNotifications > 0 ? "#FFA001" : "#CDCDE0"}
+                    />
+                  </TouchableOpacity>
+                </View>
               </View>
-              <View className="mt-1.5">
-                {unreadNotifications > 0 && (
-                  <View className="flex justify-center items-center z-10 rounded-full absolute -right-0.5 bg-red-600 -top-0.5 min-w-[15px] h-[15px]">
-                    <Text className="text-white text-xs">
-                      {unreadNotifications}
-                    </Text>
-                  </View>
-                )}
-                <TouchableOpacity onPress={toggleNotificationList}>
-                  <Image
-                    source={icons.notifications}
-                    className="w-7 h-7"
-                    resizeMode="contain"
-                    tintColor={unreadNotifications > 0 ? "#FFA001" : "#CDCDE0"}
-                  />
-                </TouchableOpacity>
+              <View className="w-full flex-1 pt-5 pb-8">
+                <Text className="text-gray-100 text-lg font-pregular mb-1">Upcoming ReadyChecks</Text>
               </View>
             </View>
-            <View className="w-full flex-1 pt-5 pb-8">
-              <Text className="text-gray-100 text-lg font-pregular mb-1">Upcoming ReadyChecks</Text>
-            </View>
-          </View>
-        )}
-        ListEmptyComponent={() => (
-          <RCEmptyState title="No Upcoming ReadyChecks" subtitle="Create one to get started!" />
-        )}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-      />
+          )}
+          ListEmptyComponent={() => (
+            <RCEmptyState title="No Upcoming ReadyChecks" subtitle="Create one to get started!" />
+          )}
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+        />
+      )}
     </SafeAreaView>
   );
 };
