@@ -6,6 +6,7 @@ import { useRouter } from "expo-router";
 import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
 import Constants from 'expo-constants';
+import io from 'socket.io-client';
 
 import { RCEmptyState, ReadyCheckCard, NotificationList } from "../../components";
 import { getOwnedReadyChecks, getInvitedReadyChecks, updateExpoPushToken, getUnreadNotificationCount } from "../../lib/appwrite"; // Import updateExpoPushToken here
@@ -91,6 +92,22 @@ const Home = () => {
       setUnreadNotifications(unread);
     }
   };
+
+  useEffect(() => {
+    const socket = io('exp://192.168.2.22:8081');
+    
+    socket.on('connect', () => {
+      console.log('Connected to server');
+    });
+
+    socket.on('message', (data) => {
+      console.log('Received message:', data);
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
 
   // Initial check for unread notifications
   useEffect(() => {
