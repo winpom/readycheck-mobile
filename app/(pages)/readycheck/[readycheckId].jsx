@@ -6,6 +6,9 @@ import { getReadyCheck, deleteReadyCheck, addOrUpdateRSVP } from "../../../lib/a
 import { formatTiming } from "../../../utils/formatTiming";
 import MiniUserCard from "../../../components/MiniUserCard";
 import { useGlobalContext } from "../../../context/GlobalProvider";
+import io from "socket.io-client";
+
+const socket = io("http://localhost:3000"); // Replace with your server URL
 
 const LiveReadyCheck = () => {
     const { readycheckId, refresh } = useLocalSearchParams();
@@ -13,11 +16,11 @@ const LiveReadyCheck = () => {
     const [timeLeft, setTimeLeft] = useState(null);
     const { user } = useGlobalContext();
     const router = useRouter();
-
     const [activeRSVP, setActiveRSVP] = useState("Pending");
 
     useEffect(() => {
         if (readycheckId) {
+            // Fetch initial data
             getReadyCheck(readycheckId)
                 .then(data => {
                     if (data) {
@@ -30,6 +33,31 @@ const LiveReadyCheck = () => {
                 })
                 .catch(error => console.error("Error fetching readycheck:", error));
         }
+
+        // Join the ReadyCheck room for real-time updates
+        socket.emit("joinReadyCheck", readycheckId);
+
+        // Listen for RSVP updates
+        socket.on("readyCheckUpdate", (updatedData) => {
+            if (updatedData.readycheckId === readycheckId) {
+                setReadyCheck(updatedData);
+            }
+        });
+
+        // Listen for ReadyCheck deletion
+        socket.on("readyCheckDeleted", (deletedReadyCheckId) => {
+            if (deletedReadyCheckId === readycheckId) {
+                Alert.alert("This ReadyCheck has been deleted.");
+                router.replace("/home"); // Redirect to home on deletion
+            }
+        });
+
+        return () => {
+            // Leave the room and clean up listeners on unmount
+            socket.emit("leaveReadyCheck", readycheckId);
+            socket.off("readyCheckUpdate");
+            socket.off("readyCheckDeleted");
+        };
     }, [readycheckId, refresh]);
 
     useEffect(() => {
@@ -63,8 +91,9 @@ const LiveReadyCheck = () => {
         try {
             await addOrUpdateRSVP(readycheckId, user.$id, status);
             setActiveRSVP(status);
-            // Alert.alert("RSVP updated", `You have responded with "${status}"`);
-            router.replace(`/readycheck/${readycheckId}`);
+
+            // Emit RSVP update to notify other clients
+            socket.emit("readyCheckUpdate", { readycheckId, updatedStatus: status });
         } catch (error) {
             console.error("Failed to update RSVP:", error);
             Alert.alert("Error", "Failed to update RSVP.");
@@ -80,7 +109,8 @@ const LiveReadyCheck = () => {
                 onPress: async () => {
                     try {
                         await deleteReadyCheck(readycheckId);
-                        router.replace("/");
+                        socket.emit("readyCheckDeleted", readycheckId); // Notify other clients
+                        router.replace("/home");
                     } catch (error) {
                         console.error("Failed to delete ReadyCheck:", error);
                     }
@@ -138,7 +168,7 @@ const LiveReadyCheck = () => {
                     <View className="px-4">
                         <View className="flex-row justify-between items-center px-4 py-4">
                             <TouchableOpacity onPress={() => router.push("/home")}>
-                                <Text className="text-white text-lg relative -left-4">Back</Text>
+                                <Text className="text-white text-lg relative -left-4">Backer</Text>
                             </TouchableOpacity>
                             {isOwner && (
                                 <View className="flex-row gap-4">

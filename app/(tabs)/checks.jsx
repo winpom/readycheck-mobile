@@ -69,10 +69,11 @@ const YourReadyChecks = () => {
           ) : (
             <Text className="text-gray-400 text-center my-2">No invitations to ReadyChecks.</Text>
           )}
-
           <Text className="text-white text-xl my-4">Archived ReadyChecks</Text>
           {archivedReadyChecks.length > 0 ? (
-            archivedReadyChecks.map((item) => <ReadyCheckCard key={item.$id} readycheck={item} />)
+            archivedReadyChecks.map((item) => (
+              <ReadyCheckCard key={item.$id} readycheck={item} archived />
+            ))
           ) : (
             <Text className="text-gray-400 text-center">No archived ReadyChecks.</Text>
           )}
