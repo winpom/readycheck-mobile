@@ -9,7 +9,7 @@ const TabIcon = ({ icon, color, name, focused }) => {
   const textTopStyle = name === "Social" ? { top: -4 } : {};
 
   return (
-    <View className="items-center justify-center gap-1">
+    <View className="flex-1 items-center justify-center gap-1 mt-3">
       <Image
         source={icon}
         resizeMode="contain"
@@ -18,7 +18,7 @@ const TabIcon = ({ icon, color, name, focused }) => {
       />
       <Text
         style={{ color: color, ...textTopStyle }}
-        className={`${focused ? "font-psemibold" : "font-pregular"} text-xs`}
+        className={`${focused ? "font-psemibold" : "font-pregular"} text-xs w-[20%]`}
       >
         {name}
       </Text>

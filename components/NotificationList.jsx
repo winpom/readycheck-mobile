@@ -74,7 +74,7 @@ const NotificationList = () => {
     if (loading && notifications.length === 0) {
         return (
             <View className="flex-1 justify-center items-center bg-primary">
-                <ActivityIndicator size="large" color="#4B5563"/>
+                <ActivityIndicator size={40} color="#4B5563"/>
             </View>
         );
     }
