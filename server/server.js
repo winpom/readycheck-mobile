@@ -1,4 +1,3 @@
-// server.js
 const express = require("express");
 const http = require("http");
 const { Server } = require("socket.io");
@@ -16,25 +15,30 @@ const io = new Server(server, {
 io.on("connection", (socket) => {
   console.log("A user connected:", socket.id);
 
-  // Event for when a user joins a readycheck
   socket.on("joinReadyCheck", (readyCheckId) => {
     socket.join(readyCheckId);
     console.log(`User ${socket.id} joined ReadyCheck ${readyCheckId}`);
   });
 
-  // Event for broadcasting updates
   socket.on("readyCheckUpdate", (data) => {
     const { readyCheckId, update } = data;
-    io.to(readyCheckId).emit("readyCheckUpdate", update);
+    
+    // Log the room members before emitting to check if all clients are present
+    const roomClients = io.sockets.adapter.rooms.get(readyCheckId);
+    console.log(`Clients in room ${readyCheckId}:`, roomClients ? Array.from(roomClients) : "No clients");
+    
+    // Emit the update to all clients in the room
+    io.to(readyCheckId).emit("readyCheckUpdate", { readyCheckId, update });
+    console.log(`Emitted readyCheckUpdate to room ${readyCheckId}`);
   });
 
-  // Handle disconnection
   socket.on("disconnect", () => {
     console.log("User disconnected:", socket.id);
   });
 });
 
 const PORT = process.env.PORT || 3000;
+
 server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });

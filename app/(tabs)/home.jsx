@@ -220,8 +220,8 @@ const Home = () => {
                 </View>
                 <View className="mt-1.5">
                   {unreadNotifications > 0 && (
-                    <View className="flex justify-center items-center z-10 rounded-full absolute -right-0.5 bg-red-600 -top-0.5 min-w-[15px] h-[15px]">
-                      <Text className="text-white text-xs">
+                    <View className="flex justify-center items-center text-center z-10 rounded-full absolute -right-0.5 bg-red-600 -top-0.5 min-w-[15px] h-[15px]">
+                      <Text className="text-white text-xs pb-4">
                         {unreadNotifications}
                       </Text>
                     </View>

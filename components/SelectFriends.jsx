@@ -46,9 +46,7 @@ const SelectFriends = ({ selectedUsers, setSelectedUsers, visible, setVisible })
     setSelectedUsers(tempSelectedUsers);
     setVisible(false);
   };
-
-  console.log(friends)
-
+  
   return (
     <Modal
       transparent={true}

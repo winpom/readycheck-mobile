@@ -8,7 +8,7 @@ import { CustomButton } from "../components";
 import { useGlobalContext } from "../context/GlobalProvider";
 
 import { useEffect, useState } from "react";
-import { forceDeleteSession, checkActiveSession } from "../lib/appwrite"; // ensure you have a checkActiveSession helper
+import { handleForceLogout } from "../lib/appwrite"; // ensure you have a checkActiveSession helper
 
 const App = () => {
   const { isLoading, isLoggedIn } = useGlobalContext();
