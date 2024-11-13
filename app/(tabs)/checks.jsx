@@ -55,7 +55,7 @@ const YourReadyChecks = () => {
     <SafeAreaView className="bg-primary h-[100vh] pt-5">
       <View className="px-3">
         <Text className="text-secondary text-3xl my-2 text-center">Your ReadyChecks</Text>
-        <ScrollView>
+        <ScrollView className="h-full">
           <Text className="text-white text-xl my-4">Owned ReadyChecks</Text>
           {ownedReadyChecks.length > 0 ? (
             ownedReadyChecks.map((item) => <ReadyCheckCard key={item.$id} readycheck={item} />)
