@@ -9,6 +9,9 @@ const GlobalProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
 
+    // Define setCurrentUser for updating the user state
+    const setCurrentUser = (updatedUser) => setUser(updatedUser);
+
     useEffect(() => {
         const fetchUser = async () => {
             setIsLoading(true);
@@ -31,7 +34,7 @@ const GlobalProvider = ({ children }) => {
                 isLoggedIn,
                 setIsLoggedIn,
                 user,
-                setUser,
+                setCurrentUser,
                 isLoading,
             }}
         >

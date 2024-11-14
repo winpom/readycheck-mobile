@@ -2,7 +2,7 @@ import { StyleSheet, Text, View } from "react-native"
 import { SplashScreen, Stack } from "expo-router";
 import { useFonts } from "expo-font";
 import { useEffect } from "react";
-import { SocketProvider } from './SocketContext';
+import { SocketProvider } from '../context/SocketContext';
 
 import GlobalProvider from "../context/GlobalProvider"
 

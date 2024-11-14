@@ -6,10 +6,10 @@ import { getReadyCheck, deleteReadyCheck, addOrUpdateRSVP } from "../../../lib/a
 import { formatTiming } from "../../../utils/formatTiming";
 import MiniUserCard from "../../../components/MiniUserCard";
 import { useGlobalContext } from "../../../context/GlobalProvider";
-import { useSocket } from '../../SocketContext';
+import { useSocket } from '../../../context/SocketContext';
 
 const LiveReadyCheck = () => {
-    const socket = useSocket();  // Use socket from context
+    const socket = useSocket();
     const { readycheckId, refresh } = useLocalSearchParams();
     const [readycheck, setReadyCheck] = useState(null);
     const [timeLeft, setTimeLeft] = useState(null);
@@ -37,7 +37,7 @@ const LiveReadyCheck = () => {
         // Listen for readyCheck deletion
         socket.on("readyCheckDeleted", (deletedReadyCheckId) => {
             if (deletedReadyCheckId === readycheckId) {
-                Alert.alert("This ReadyCheck has been deleted.");
+                // Alert.alert("This ReadyCheck has been deleted.");
                 router.replace("/home"); // Redirect to home on deletion
             }
         });

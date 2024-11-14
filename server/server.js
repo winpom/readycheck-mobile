@@ -1,6 +1,7 @@
 const express = require("express");
 const http = require("http");
 const { Server } = require("socket.io");
+require('dotenv').config(); // Use dotenv to access PORT variable
 
 const app = express();
 const server = http.createServer(app);
@@ -11,25 +12,107 @@ const io = new Server(server, {
   }
 });
 
+const livePORT = process.env.PORT || 3000;
+
 // Listen for client connections
 io.on("connection", (socket) => {
   console.log("A user connected:", socket.id);
 
-  socket.on("joinReadyCheck", (readyCheckId) => {
-    socket.join(readyCheckId);
-    console.log(`User ${socket.id} joined ReadyCheck ${readyCheckId}`);
+  // Join user-specific room based on userId
+  socket.on("joinUserRoom", (userId) => {
+    socket.join(userId);
+    console.log(`User ${socket.id} joined room for user ${userId}`);
   });
 
+  // Allow users to leave user-specific room
+  socket.on("leaveUserRoom", (userId) => {
+    socket.leave(userId);
+    console.log(`User ${socket.id} left room for user ${userId}`);
+  });
+
+  // Join and leave common rooms for friends and homepage
+  socket.on("joinHomePage", () => {
+    socket.join("homePageRoom");
+    console.log(`User ${socket.id} joined the homePageRoom [server]`);
+  });
+
+  socket.on("joinFriendsRoom", () => {
+    socket.join("friendsRoom");
+    console.log(`User ${socket.id} joined friendsRoom for real-time updates [server]`);
+  });
+
+  socket.on("leaveFriendsRoom", () => {
+    socket.leave("friendsRoom");
+    console.log(`User ${socket.id} left friendsRoom for real-time updates [server]`);
+  });
+
+  // Emit friendRequestSent event to friendsRoom and user-specific rooms
+  socket.on("friendRequestSent", (userId, friendId) => {
+    io.to("friendsRoom").emit("friendRequestSent", { userId, friendId });
+    io.to(userId).emit("friendRequestSent", { friendId });
+    io.to(friendId).emit("friendRequestSent", { userId });
+    console.log(`Emitted friendRequestSent event for userId: ${userId} and friendId: ${friendId}`);
+  });
+
+  // Emit friendAdded event to friendsRoom and user-specific rooms
+  socket.on("friendAdded", (userId, friendId) => {
+    io.to("friendsRoom").emit("friendAdded", { userId, friendId });
+    io.to(userId).emit("friendAdded", { friendId });
+    io.to(friendId).emit("friendAdded", { userId });
+    console.log(`Emitted friendAdded event for userId: ${userId} and friendId: ${friendId}`);
+  });
+
+  // Emit friendRemoved event to friendsRoom and user-specific rooms
+  socket.on("friendRemoved", (userId, friendId) => {
+    io.to("friendsRoom").emit("friendRemoved", { userId, friendId });
+    io.to(userId).emit("friendRemoved", { friendId });
+    io.to(friendId).emit("friendRemoved", { userId });
+    console.log(`Emitted friendRemoved event for userId: ${userId} and friendId: ${friendId}`);
+  });
+
+  // Room joins for readyCheck and homepage
+  socket.on("joinReadyCheck", (readyCheckId) => {
+    socket.join(readyCheckId);
+    console.log(`User ${socket.id} joined ReadyCheck room ${readyCheckId} [server]`);
+  });
+
+  socket.on("leaveReadyCheck", (readyCheckId) => {
+    socket.leave(readyCheckId);
+    console.log(`User ${socket.id} left ReadyCheck room ${readyCheckId} [server]`);
+  });
+
+  // Handle readyCheck creation
+  socket.on("readyCheckCreated", (data) => {
+    const { readyCheckId, invitees } = data;
+
+    // Emit update to the homepage room for real-time ReadyCheck updates
+    io.to("homePageRoom").emit("readyCheckUpdate", { readyCheckId });
+    console.log(`Emitted readyCheckCreated to homePageRoom for ReadyCheck ID ${readyCheckId} [server]`);
+
+    // Notify specific invitees
+    invitees.forEach((inviteeId) => {
+      io.to(inviteeId).emit("readyCheckUpdate", { readyCheckId });
+      console.log(`Notified invitee ${inviteeId} of new ReadyCheck ${readyCheckId} [server]`);
+    });
+  });
+
+  // Handle readyCheck updates
   socket.on("readyCheckUpdate", (data) => {
     const { readyCheckId, update } = data;
-    
-    // Log the room members before emitting to check if all clients are present
-    const roomClients = io.sockets.adapter.rooms.get(readyCheckId);
-    console.log(`Clients in room ${readyCheckId}:`, roomClients ? Array.from(roomClients) : "No clients");
-    
-    // Emit the update to all clients in the room
+
+    // Emit to the specific readyCheck room and homepage
     io.to(readyCheckId).emit("readyCheckUpdate", { readyCheckId, update });
-    console.log(`Emitted readyCheckUpdate to room ${readyCheckId}`);
+    io.to("homePageRoom").emit("readyCheckUpdate", { readyCheckId, update });
+  });
+
+  socket.on("newInvite", (readyCheckId, invitedUserId) => {
+    io.to("homePageRoom").emit("readyCheckUpdate", { readyCheckId });
+    console.log(`Emitted readyCheckUpdate to homePageRoom for new invite on ID ${readyCheckId}`);
+  });
+
+  socket.on("readyCheckDeleted", (readyCheckId) => {
+    io.to(readyCheckId).emit("readyCheckDeleted", readyCheckId);
+    io.to("homePageRoom").emit("readyCheckDeleted", readyCheckId);
   });
 
   socket.on("disconnect", () => {
@@ -37,8 +120,7 @@ io.on("connection", (socket) => {
   });
 });
 
-const PORT = process.env.PORT || 3000;
-
-server.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+// Listen on designated port
+server.listen(livePORT, () => {
+  console.log(`Server is running on port ${livePORT}`);
 });

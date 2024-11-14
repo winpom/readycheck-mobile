@@ -24,7 +24,7 @@ const OwnedProfile = () => {
     <SafeAreaView className="bg-primary h-full">
       {/* Header with Back and Edit Buttons */}
       <View className="flex-row justify-between items-center px-4 py-4">
-        <TouchableOpacity onPress={() => router.replace("/settings")}>
+        <TouchableOpacity onPress={() => router.back()}>
           <Text className="text-white text-lg">Back</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => router.replace("/editProfile")}>
