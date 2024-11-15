@@ -37,3 +37,9 @@ yarn-error.*
 
 # future development
 futuredev
+
+# amplify
+node_modules
+.amplify
+amplify_outputs*
+amplifyconfiguration*
