@@ -37,7 +37,7 @@ const Settings = () => {
             className="w-6 h-6 mr-3"
             resizeMode="contain"
           />
-          <Text className="text-lg font-psemibold text-white">Profile</Text>
+          <Text className="text-lg font-psemibold text-white">   Profile</Text>
         </Link>
 
         {/* Logout Button */}

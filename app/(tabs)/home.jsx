@@ -236,7 +236,7 @@ const Home = () => {
       )}
 
       {loading ? (
-        <ActivityIndicator size={40} color="#ffffff" style={{ marginTop: 30 }} />
+        <ActivityIndicator size="large" color="#FF9C01" style={{ marginTop: 30 }} />
       ) : (
         <FlatList
           data={activeReadyChecks}

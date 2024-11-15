@@ -7,19 +7,15 @@ import { getFriends } from "../lib/appwrite";
 
 const SelectFriends = ({ selectedUsers, setSelectedUsers, visible, setVisible }) => {
   const { user } = useGlobalContext();
-  const [friends, setFriends] = useState([]);
+  const [friends, setFriends] = useState([]); // Only friends data
   const [tempSelectedUsers, setTempSelectedUsers] = useState([]);
 
   useEffect(() => {
     const fetchFriends = async () => {
       try {
-        const response = await getFriends(user.$id);
-        setFriends(response.map(friend => ({
-          id: friend.id,
-          displayName: friend.displayName,
-          username: friend.username,
-          avatarUrl: friend.avatar,
-        })));
+        // Fetch friends and friendRequests
+        const { friends: fetchedFriends } = await getFriends(user.$id);
+        setFriends(fetchedFriends); // Only set the friends data
       } catch (error) {
         Alert.alert("Error", "Could not load friends.");
       }
@@ -46,7 +42,7 @@ const SelectFriends = ({ selectedUsers, setSelectedUsers, visible, setVisible })
     setSelectedUsers(tempSelectedUsers);
     setVisible(false);
   };
-  
+
   return (
     <Modal
       transparent={true}
@@ -60,7 +56,7 @@ const SelectFriends = ({ selectedUsers, setSelectedUsers, visible, setVisible })
           <ScrollView>
             {friends.map(friend => (
               <TouchableOpacity
-                key={friend.id}
+                key={friend.id} // Ensure unique keys
                 className="flex-row items-center"
                 onPress={() => toggleUserSelection(friend.id)}
               >
@@ -69,9 +65,9 @@ const SelectFriends = ({ selectedUsers, setSelectedUsers, visible, setVisible })
                   onPress={() => toggleUserSelection(friend.id)}
                   containerStyle={{ marginRight: 10, padding: 0 }}
                 />
-                {friend.avatarUrl ? (
+                {friend.avatar ? (
                   <Image
-                    source={{ uri: friend.avatarUrl }}
+                    source={{ uri: friend.avatar }}
                     className="w-8 h-8 rounded-full mr-3"
                   />
                 ) : (

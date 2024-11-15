@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { View, Text, FlatList, RefreshControl, StatusBar, Image, ScrollView } from "react-native";
+import { View, Text, RefreshControl, StatusBar, Image, ScrollView, ActivityIndicator } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useGlobalContext } from "../context/GlobalProvider";
 import { getFriends } from "../lib/appwrite";
@@ -13,6 +13,7 @@ const FriendsList = () => {
   const socket = useSocket();
   const { data: friendsData, refetch } = useAppwrite(() => getFriends(user.$id));
   const [refreshing, setRefreshing] = useState(false);
+  const [isLoading, setIsLoading] = useState(false); 
 
   // Separate friends and friend requests from data
   const friends = friendsData?.friends || [];
@@ -21,8 +22,10 @@ const FriendsList = () => {
   // Refetch friend data on refresh action
   const handleRefresh = useCallback(async () => {
     setRefreshing(true);
+    setIsLoading(true);
     await refetch();
     setRefreshing(false);
+    setIsLoading(false);
   }, [refetch]);
 
   useEffect(() => {
@@ -63,12 +66,20 @@ const FriendsList = () => {
     <SafeAreaView className="bg-primary h-[100vh]">
       <StatusBar backgroundColor="#161622" style="light" />
       <View className="-mt-8 px-3">
-        <ScrollView className="h-full">
+        <ScrollView className="h-full" refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}>
+
+          {isLoading && (
+            <View className="my-2 justify-center items-center">
+              <ActivityIndicator size="large" color="#FF9C01" />
+            </View>
+          )}
 
           {/* Friends List Section */}
           <Text className="text-gray-100 text-lg font-pregular my-2">Friends List</Text>
           {friends.length > 0 ? (
-            friends.map((item) => <UserCard key={item.$id} user={item} />)
+            friends.map((item) => (
+              <UserCard key={item.id || item.$id} user={item} />
+            ))
           ) : (
             <View className="justify-center items-center px-4 my-2">
               <Image
@@ -88,7 +99,9 @@ const FriendsList = () => {
           {/* Friend Requests Section */}
           <Text className="text-gray-100 text-base font-pregular mt-5 mb-1">Friend Requests</Text>
           {friendRequests.length > 0 ? (
-            friendRequests.map((item) => <UserCard key={item.$id} user={item} />)
+            friendRequests.map((item) => (
+              <UserCard key={item.id || item.$id} user={item} isRequest />
+            ))
           ) : (
             <Text className="text-gray-400 text-center my-2">No friend requests.</Text>
           )}

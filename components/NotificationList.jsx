@@ -74,7 +74,7 @@ const NotificationList = () => {
     if (loading && notifications.length === 0) {
         return (
             <View className="flex-1 justify-center items-center bg-primary">
-                <ActivityIndicator size={40} color="#4B5563"/>
+                <ActivityIndicator size="large" color="#FF9C01"/>
             </View>
         );
     }
@@ -103,7 +103,7 @@ const NotificationList = () => {
             onEndReached={loadMoreNotifications} // Load more when the end is reached
             onEndReachedThreshold={0.5}
             ListFooterComponent={
-                hasMore && isLoadingMore ? <ActivityIndicator size="small" color="#4B5563" /> : null
+                hasMore && isLoadingMore ? <ActivityIndicator size="small" color="#FF9C01" /> : null
             }
         />
     );
