@@ -6,32 +6,69 @@ import { getReadyCheck, deleteReadyCheck, addOrUpdateRSVP } from "../../../lib/a
 import { formatTiming } from "../../../utils/formatTiming";
 import MiniUserCard from "../../../components/MiniUserCard";
 import { useGlobalContext } from "../../../context/GlobalProvider";
+import { useSocket } from '../../../context/SocketContext';
 
 const LiveReadyCheck = () => {
+    const socket = useSocket();
     const { readycheckId, refresh } = useLocalSearchParams();
     const [readycheck, setReadyCheck] = useState(null);
     const [timeLeft, setTimeLeft] = useState(null);
     const { user } = useGlobalContext();
     const router = useRouter();
-
     const [activeRSVP, setActiveRSVP] = useState("Pending");
 
+    // Socket connection setup for joining room and handling updates
     useEffect(() => {
-        if (readycheckId) {
-            getReadyCheck(readycheckId)
-                .then(data => {
-                    if (data) {
-                        setReadyCheck(data);
-                        const userRSVP = data.rsvps.find(rsvp => rsvp.userId === user?.$id)?.status || "Pending";
-                        setActiveRSVP(userRSVP);
-                    } else {
-                        setReadyCheck(null);
-                    }
-                })
-                .catch(error => console.error("Error fetching readycheck:", error));
-        }
-    }, [readycheckId, refresh]);
+        if (!socket || !readycheckId) return;
 
+        // Join room for real-time updates
+        socket.emit("joinReadyCheck", readycheckId);
+        console.log(`Socket joining room for ReadyCheck ID: ${readycheckId}`);
+
+        // Listen for real-time readyCheck updates
+        socket.on("readyCheckUpdate", (updatedData) => {
+            console.log("Received readyCheckUpdate event on client:", socket.id, updatedData);
+            if (updatedData.readyCheckId === readycheckId) {
+                console.log("Updating readycheck state with new data on client:", socket.id, updatedData.update);
+                setReadyCheck(updatedData.update);
+            }
+        });
+
+        // Listen for readyCheck deletion
+        socket.on("readyCheckDeleted", (deletedReadyCheckId) => {
+            if (deletedReadyCheckId === readycheckId) {
+                // Alert.alert("This ReadyCheck has been deleted.");
+                router.replace("/home"); // Redirect to home on deletion
+            }
+        });
+
+        // Cleanup listeners on unmount
+        return () => {
+            console.log(`Socket leaving room for ReadyCheck ID: ${readycheckId}`);
+            socket.emit("leaveReadyCheck", readycheckId);
+            socket.off("readyCheckUpdate");
+            socket.off("readyCheckDeleted");
+        };
+    }, [socket, readycheckId]);
+
+    // Initial data fetch for the readyCheck details
+    useEffect(() => {
+        if (!readycheckId) return;
+
+        getReadyCheck(readycheckId)
+            .then(data => {
+                if (data) {
+                    setReadyCheck(data);
+                    const userRSVP = data.rsvps.find(rsvp => rsvp.userId === user?.$id)?.status || "Pending";
+                    setActiveRSVP(userRSVP);
+                } else {
+                    setReadyCheck(null);
+                }
+            })
+            .catch(error => console.error("Error fetching readycheck:", error));
+    }, [readycheckId]);
+
+    // Timer countdown calculation for the readyCheck timing
     useEffect(() => {
         if (!readycheck) return;
 
@@ -63,8 +100,15 @@ const LiveReadyCheck = () => {
         try {
             await addOrUpdateRSVP(readycheckId, user.$id, status);
             setActiveRSVP(status);
-            // Alert.alert("RSVP updated", `You have responded with "${status}"`);
-            router.replace(`/readycheck/${readycheckId}`);
+            console.log(`RSVP updated to "${status}" for ReadyCheck ID: ${readycheckId}`);
+
+            const updatedReadyCheck = await getReadyCheck(readycheckId);
+            console.log("Fetched updated ReadyCheck data:", updatedReadyCheck);
+            setReadyCheck(updatedReadyCheck);
+
+            // Emit RSVP update to notify other clients
+            socket.emit("readyCheckUpdate", { readyCheckId: readycheckId, update: updatedReadyCheck });
+            console.log("Emitting readyCheckUpdate event:", { readyCheckId: readycheckId, update: updatedReadyCheck });
         } catch (error) {
             console.error("Failed to update RSVP:", error);
             Alert.alert("Error", "Failed to update RSVP.");
@@ -80,7 +124,8 @@ const LiveReadyCheck = () => {
                 onPress: async () => {
                     try {
                         await deleteReadyCheck(readycheckId);
-                        router.replace("/");
+                        socket.emit("readyCheckDeleted", readycheckId); // Notify other clients
+                        router.replace("/home");
                     } catch (error) {
                         console.error("Failed to delete ReadyCheck:", error);
                     }

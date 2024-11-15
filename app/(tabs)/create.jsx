@@ -9,10 +9,12 @@ import { FormField, CustomButton, SelectFriends } from "../../components";
 import { createReadyCheck, getAllUsers } from "../../lib/appwrite";
 import { formatTiming } from "../../utils/formatTiming";
 import { useGlobalContext } from '../../context/GlobalProvider';
+import { useSocket } from '../../context/SocketContext';
 
 import { icons } from "../../constants";
 
 const CreateReadyCheck = () => {
+  const socket = useSocket();
   const [uploading, setUploading] = useState(false);
   const [users, setUsers] = useState([]);
   const [showInviteesModal, setShowInviteesModal] = useState(false);
@@ -58,36 +60,38 @@ const CreateReadyCheck = () => {
     setShowTimingModal(false);
   };
 
-  const submit = async () => {
-    if (isLoading || !user) {
+    const submit = async () => {
+    if (!user) {
       return Alert.alert("Loading user data, please wait...");
     }
-  
+
     if (!form.title || !form.timing || !form.invitees.length) {
       return Alert.alert("Please fill out all required fields");
     }
-  
+
     setUploading(true);
-  
+
     try {
-      // Assign `owner` to the current user's ID
       const newReadyCheck = await createReadyCheck({
         ...form,
         owner: user.$id,
       });
-  
+
       Alert.alert('Success', 'ReadyCheck created');
-  
-      // Navigate to the newly created ReadyCheck's page using newReadyCheck.$id
+
+      // Emit readyCheckCreated to notify homepage
+      socket.emit("readyCheckCreated", {
+        readyCheckId: newReadyCheck.$id,
+        invitees: form.invitees,
+      });
+
       router.push(`/readycheck/${newReadyCheck.$id}`);
     } catch (error) {
       Alert.alert('Error', error.message);
     } finally {
-      setForm({ title: "", timing: "", description: "", invitees: [] });
       setUploading(false);
     }
   };
-  
 
   const displayTiming = form.timing ? formatTiming(form.timing) : { date: '', time: '' };
 

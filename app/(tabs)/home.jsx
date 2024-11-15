@@ -11,6 +11,7 @@ import { RCEmptyState, ReadyCheckCard, NotificationList } from "../../components
 import { getOwnedReadyChecks, getInvitedReadyChecks, updateExpoPushToken, getUnreadNotificationCount } from "../../lib/appwrite"; // Import updateExpoPushToken here
 import { icons } from "../../constants";
 import { useGlobalContext } from "../../context/GlobalProvider";
+import { useSocket } from '../../context/SocketContext';
 
 // Set up notifications handling
 Notifications.setNotificationHandler({
@@ -64,6 +65,7 @@ async function registerForPushNotificationsAsync(userId) {
 }
 
 const Home = () => {
+  const socket = useSocket();
   const { user } = useGlobalContext();
   const router = useRouter();
 
@@ -83,6 +85,35 @@ const Home = () => {
       router.replace("/sign-in");
     }
   }, [user]);
+
+  // Socket connection setup for joining room and handling updates
+  useEffect(() => {
+    if (!socket) return;
+
+    // Join room for real-time updates
+    socket.emit("joinHomePage");
+    console.log("Socket joined the homepage room for listening to all readyCheck updates");
+
+    // Listen for any readyCheck updates and refetch the readyCheck list
+    socket.on("readyCheckUpdate", (updatedData) => {
+      console.log("Received readyCheckUpdate event on homepage:", updatedData);
+      fetchReadyChecks(); // Refetch list when an update is detected
+    });
+
+    // Listen for any readyCheck deletions and refetch
+    socket.on("readyCheckDeleted", (deletedReadyCheckId) => {
+      console.log("Received readyCheckDeleted event for ID:", deletedReadyCheckId);
+      fetchReadyChecks(); // Refetch list when a deletion is detected
+    });
+
+    // Cleanup listeners on unmount
+    return () => {
+      console.log("Leaving homepage room for readyCheck updates");
+      socket.emit("leaveHomePage");
+      socket.off("readyCheckUpdate");
+      socket.off("readyCheckDeleted");
+    };
+  }, [socket]);
 
   // Check for unread notifications
   const checkUnreadNotifications = async () => {
@@ -125,7 +156,7 @@ const Home = () => {
       fetchReadyChecks();
     }
   }, [user]);
-  
+
   // Refresh handler
   const onRefresh = async () => {
     setRefreshing(true);
@@ -205,7 +236,7 @@ const Home = () => {
       )}
 
       {loading ? (
-        <ActivityIndicator size={40} color="#ffffff" style={{ marginTop: 30 }} />
+        <ActivityIndicator size="large" color="#FF9C01" style={{ marginTop: 30 }} />
       ) : (
         <FlatList
           data={activeReadyChecks}
@@ -220,8 +251,8 @@ const Home = () => {
                 </View>
                 <View className="mt-1.5">
                   {unreadNotifications > 0 && (
-                    <View className="flex justify-center items-center z-10 rounded-full absolute -right-0.5 bg-red-600 -top-0.5 min-w-[15px] h-[15px]">
-                      <Text className="text-white text-xs">
+                    <View className="flex justify-center items-center text-center z-10 rounded-full absolute -right-0.5 bg-red-600 -top-0.5 min-w-[15px] h-[15px]">
+                      <Text className="text-white text-xs pb-4">
                         {unreadNotifications}
                       </Text>
                     </View>

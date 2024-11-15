@@ -4,52 +4,76 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useGlobalContext } from "../../context/GlobalProvider";
 import { getOwnedReadyChecks, getInvitedReadyChecks } from "../../lib/appwrite";
 import ReadyCheckCard from "../../components/ReadyCheckCard";
+import { useSocket } from "../../context/SocketContext";
 
 const YourReadyChecks = () => {
   const { user } = useGlobalContext();
+  const socket = useSocket();
   const [ownedReadyChecks, setOwnedReadyChecks] = useState([]);
   const [invitedReadyChecks, setInvitedReadyChecks] = useState([]);
   const [archivedReadyChecks, setArchivedReadyChecks] = useState([]);
 
+  // Fetch ready checks from the server
+  const fetchReadyChecks = async () => {
+    try {
+      // Fetch readychecks the user is connected to
+      const owned = await getOwnedReadyChecks(user.$id);
+      const invited = await getInvitedReadyChecks(user.$id);
+
+      // Current time in milliseconds
+      const now = Date.now();
+
+      // Filter archived readychecks (timing older than 24 hours from now)
+      const ownedArchived = owned.filter((readycheck) => {
+        const readyCheckTime = new Date(readycheck.timing).getTime();
+        return now - readyCheckTime > 86400000;
+      });
+
+      const invitedArchived = invited.filter((readycheck) => {
+        const readyCheckTime = new Date(readycheck.timing).getTime();
+        return now - readyCheckTime > 86400000;
+      });
+
+      // Active Lists
+      setOwnedReadyChecks(owned.filter((readycheck) => !ownedArchived.includes(readycheck)));
+      setInvitedReadyChecks(invited.filter((readycheck) => !invitedArchived.includes(readycheck)));
+
+      // Combine and sort archived readychecks in descending order of timing
+      const archived = [...ownedArchived, ...invitedArchived].sort((a, b) => new Date(b.timing) - new Date(a.timing));
+      setArchivedReadyChecks(archived);
+
+    } catch (error) {
+      console.error("Error fetching readychecks:", error);
+      Alert.alert("Error", "Could not load ReadyChecks.");
+    }
+  };
+
   useEffect(() => {
-    const fetchReadyChecks = async () => {
-      try {
-        // Fetch readychecks the user owns
-        const owned = await getOwnedReadyChecks(user.$id);
-
-        // Fetch readychecks the user has been invited to
-        const invited = await getInvitedReadyChecks(user.$id);
-
-        // Current time in milliseconds
-        const now = Date.now();
-
-        // Filter archived readychecks (timing older than 24 hours from now)
-        const ownedArchived = owned.filter((readycheck) => {
-          const readyCheckTime = new Date(readycheck.timing).getTime();
-          return now - readyCheckTime > 86400000;
-        });
-
-        const invitedArchived = invited.filter((readycheck) => {
-          const readyCheckTime = new Date(readycheck.timing).getTime();
-          return now - readyCheckTime > 86400000;
-        });
-
-        // Active Lists
-        setOwnedReadyChecks(owned.filter((readycheck) => !ownedArchived.includes(readycheck)))
-        setInvitedReadyChecks(invited.filter((readycheck) => !invitedArchived.includes(readycheck)))
-
-        // Combine and sort archived readychecks in descending order of timing
-        const archived = [...ownedArchived, ...invitedArchived].sort((a, b) => new Date(b.timing) - new Date(a.timing));
-        setArchivedReadyChecks(archived);
-
-      } catch (error) {
-        console.error("Error fetching readychecks:", error);
-        Alert.alert("Error", "Could not load ReadyChecks.");
-      }
-    };
-
     fetchReadyChecks();
   }, [user.$id]);
+
+  // Set up socket listeners for real-time updates
+  useEffect(() => {
+    if (!socket) return;
+
+    // Listen for readyCheck updates and refetch the data on update
+    socket.on("readyCheckUpdate", () => {
+      console.log("Received readyCheckUpdate event");
+      fetchReadyChecks();
+    });
+
+    // Listen for readyCheck deletion and refetch the data on deletion
+    socket.on("readyCheckDeleted", () => {
+      console.log("Received readyCheckDeleted event");
+      fetchReadyChecks();
+    });
+
+    // Cleanup listeners on component unmount
+    return () => {
+      socket.off("readyCheckUpdate");
+      socket.off("readyCheckDeleted");
+    };
+  }, [socket]);
 
   return (
     <SafeAreaView className="bg-primary h-[100vh] pt-5">

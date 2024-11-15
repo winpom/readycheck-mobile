@@ -1,9 +1,7 @@
-import { View, Text } from "react-native"
-import React from "react"
-import { SafeAreaView } from "react-native-safe-area-context"
-
+import React from "react";
+import { View, Text } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { FriendsList, SearchInput } from "../../components";
-
 
 const Social = () => {
   return (
@@ -14,7 +12,7 @@ const Social = () => {
       </View>
       <FriendsList />
     </SafeAreaView>
-  )
-}
+  );
+};
 
-export default Social
+export default Social;
