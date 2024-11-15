@@ -18,16 +18,18 @@ const livePORT = process.env.PORT || 3000;
 io.on("connection", (socket) => {
   console.log("A user connected:", socket.id);
 
-  // Join user-specific room based on userId
+  // Join a user-specific room
   socket.on("joinUserRoom", (userId) => {
-    socket.join(userId);
-    console.log(`User ${socket.id} joined room for user ${userId}`);
+    const userRoom = `userRoom_${userId}`; // Use a naming convention
+    socket.join(userRoom);
+    console.log(`User ${socket.id} joined room ${userRoom}`);
   });
 
   // Allow users to leave user-specific room
   socket.on("leaveUserRoom", (userId) => {
-    socket.leave(userId);
-    console.log(`User ${socket.id} left room for user ${userId}`);
+    const userRoom = `userRoom_${userId}`; // Use the same naming convention
+    socket.leave(userRoom);
+    console.log(`User ${socket.id} left room ${userRoom}`);
   });
 
   // Join and leave common rooms for friends and homepage
@@ -56,18 +58,22 @@ io.on("connection", (socket) => {
 
   // Emit friendAdded event to friendsRoom and user-specific rooms
   socket.on("friendAdded", (userId, friendId) => {
+    const userRoom = `userRoom_${userId}`;
+    const friendRoom = `userRoom_${friendId}`;
     io.to("friendsRoom").emit("friendAdded", { userId, friendId });
-    io.to("homePageRoom").emit("friendAdded", { userId, friendId  });
-    io.to(userId).emit("friendAdded", { friendId });
-    io.to(friendId).emit("friendAdded", { userId });
+    io.to("homePageRoom").emit("friendAdded", { userId, friendId });
+    io.to(userRoom).emit("friendAdded", { friendId });
+    io.to(friendRoom).emit("friendAdded", { userId });
     console.log(`Emitted friendAdded event for userId: ${userId} and friendId: ${friendId}`);
   });
 
   // Emit friendRemoved event to friendsRoom and user-specific rooms
   socket.on("friendRemoved", (userId, friendId) => {
+    const userRoom = `userRoom_${userId}`;
+    const friendRoom = `userRoom_${friendId}`;
     io.to("friendsRoom").emit("friendRemoved", { userId, friendId });
-    io.to(userId).emit("friendRemoved", { friendId });
-    io.to(friendId).emit("friendRemoved", { userId });
+    io.to(userRoom).emit("friendRemoved", { friendId });
+    io.to(friendRoom).emit("friendRemoved", { userId });
     console.log(`Emitted friendRemoved event for userId: ${userId} and friendId: ${friendId}`);
   });
 
