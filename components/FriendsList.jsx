@@ -30,12 +30,16 @@ const FriendsList = () => {
 
     // Listen for friendAdded and friendRemoved events
     socket.on("friendAdded", ({ friendId, userId }) => {
-      if (userId === user.$id) handleRefresh();
+      if (userId === user.$id || friendId === user.$id) {
+        handleRefresh();
+      }
     });
-
+    
     socket.on("friendRemoved", ({ friendId, userId }) => {
-      if (userId === user.$id) handleRefresh();
-    });
+      if (userId === user.$id || friendId === user.$id) {
+        handleRefresh();
+      }
+    });    
 
     // Cleanup listeners on component unmount
     return () => {

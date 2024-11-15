@@ -67,7 +67,7 @@ const OtherProfile = () => {
       await requestFriend(currentUser.$id, userId);
       setRelationshipStatus("pending");
       Alert.alert("Friend request sent!");
-      
+
       if (socket) {
         socket.emit("friendRequestSent", currentUser.$id, userId);
       }
@@ -159,10 +159,21 @@ const OtherProfile = () => {
             <View className="w-16 h-16 border border-secondary rounded-lg justify-center items-center">
               <Image source={{ uri: profileUser?.avatar }} className="w-[90%] h-[90%] rounded-lg" resizeMode="cover" />
             </View>
-            <InfoBox title={profileUser?.displayName || profileUser?.username} containerStyles="mt-5" titleStyles="text-lg" />
+            <InfoBox
+              title={profileUser?.displayName || profileUser?.username}
+              subtitle={profileUser?.displayName ? profileUser?.username : undefined}
+              containerStyles="mt-5"
+              titleStyles="text-lg" />
             <View className="mt-5 flex-row">
-              <InfoBox title={activeReadychecks?.length || 0} subtitle="ReadyChecks" containerStyles="mr-10" titleStyles="text-xl" />
-              <InfoBox title={profileUser?.friends?.length || 0} subtitle="Friends" titleStyles="text-xl" />
+              <InfoBox
+                title={activeReadychecks?.length || 0}
+                subtitle="ReadyChecks"
+                containerStyles="mr-10"
+                titleStyles="text-xl" />
+              <InfoBox
+                title={profileUser?.friends?.length || 0}
+                subtitle="Friends"
+                titleStyles="text-xl" />
             </View>
 
             {relationshipStatus === "none" && (

@@ -6,7 +6,6 @@ import NotificationCard from "./NotificationCard";
 import NotificationList from "./NotificationList";
 import RCEmptyState from "./RCEmptyState";
 import ReadyCheckCard from "./ReadyCheckCard";
-import RecentActivity from "./RecentActivity";
 import SearchInput from "./SearchInput";
 import SelectFriends from "./SelectFriends";
 import UserCard from "./UserCard";
@@ -20,7 +19,6 @@ export {
   NotificationList,
   RCEmptyState,
   ReadyCheckCard,
-  RecentActivity,
   SearchInput,
   SelectFriends,
   UserCard

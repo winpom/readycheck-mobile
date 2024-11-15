@@ -10,7 +10,6 @@ const Social = () => {
       <View className="items-center">
         <SearchInput />
       </View>
-      {/* FriendsList now handles its own socket events */}
       <FriendsList />
     </SafeAreaView>
   );

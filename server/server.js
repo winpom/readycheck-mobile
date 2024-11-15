@@ -57,6 +57,7 @@ io.on("connection", (socket) => {
   // Emit friendAdded event to friendsRoom and user-specific rooms
   socket.on("friendAdded", (userId, friendId) => {
     io.to("friendsRoom").emit("friendAdded", { userId, friendId });
+    io.to("homePageRoom").emit("friendAdded", { userId, friendId  });
     io.to(userId).emit("friendAdded", { friendId });
     io.to(friendId).emit("friendAdded", { userId });
     console.log(`Emitted friendAdded event for userId: ${userId} and friendId: ${friendId}`);
